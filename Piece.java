@@ -3,6 +3,9 @@ package Puzzle;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * This is the Piece Class. It is used to setup the
  * Different Tetromino pieces, and contains all necessary
@@ -34,7 +37,20 @@ public class Piece {
         // helper methods.
         this.determinePiece(num);
         this.generatePiece(_boardPane);
-        this.addToBoard();
+//        this.addToBoard();
+
+    }
+
+    public Piece(Pane boardPane, GameCircle[][] board, int num, int[][] coordinates) {
+        _gameCircleArray = board;
+        _boardPane = boardPane;
+        _piece = null;
+        _colour = null;
+        // helper methods.
+        this.determinePiece(num);
+        _type = coordinates;
+        this.generatePiece(_boardPane);
+//        this.addToBoard();
 
     }
 
@@ -119,8 +135,8 @@ public class Piece {
             int col = (_type[i][0] + Constants.X_OFFSET) / (2 * Constants.CIRCLE_WIDTH);
             int row = (_type[i][1] +  Constants.Y_OFFSET) / (2 * Constants.CIRCLE_WIDTH);
             _piece[i] = new GameCircle(row, col, _colour, _gameCircleArray);
-            System.out.println("i: " + i + " col: " + col + " row: " + row);
-            boardPane.getChildren().addAll(_piece[i].getCirc());
+//            System.out.println("i: " + i + " col: " + col + " row: " + row);
+//            boardPane.getChildren().addAll(_piece[i].getCirc());
         }
     }
 
@@ -235,8 +251,65 @@ public class Piece {
                 }
             }
 //            this.setColour(Color.RED);
-
         }
+    }
+
+    public int[][] dotProduct(int[][] A, int[][] B) {
+        int rows_A = A.length;
+        int rows_B = B.length;
+        int cols_B = B[0].length;
+
+        int[][] C = new int[rows_A][cols_B];
+
+        for (int i = 0; i < rows_A; i++) {
+            for (int j = 0; j < cols_B; j++) {
+                for (int k = 0; k < rows_B; k++) {
+                    C[i][j] += A[i][k] * B[k][j];
+                }
+            }
+        }
+        return C;
+    }
+
+    public void printMatrix(int[][] matrix) {
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[row].length; col++) {
+                System.out.printf("%4d", matrix[row][col]);
+            }
+            System.out.println();
+        }
+    }
+
+    public int[][] rotateCoordinates(int[][] coordinates, double theta) {
+        int[][] rotationMatrix = {{(int) Math.cos(theta), (int) -Math.sin(theta)},
+                                    {(int) Math.sin(theta), (int) -Math.cos(theta)}};
+        int[][] ans = this.dotProduct(coordinates, rotationMatrix);
+//        this.printMatrix(ans);
+        return ans;
+    }
+
+    public int[][] flipInYCoordinates(int[][] coordinates) {
+        int[][] flipCoords = new int[coordinates.length][coordinates[0].length];
+        if (coordinates.length % 2 == 1) {
+            int yAxis = coordinates[(int) Math.ceil(coordinates.length / 2)][0];
+            for (int i = 0; i < coordinates.length; i++) {
+                int diff = coordinates[i][0] - yAxis;
+                flipCoords[i][0] = - diff;
+                flipCoords[i][1] = coordinates[i][1];
+            }
+        }
+        else {
+            int y1 = (int) Math.ceil(coordinates.length / 2);
+            int yAxis = coordinates[y1 + 1][0] - coordinates[y1][0];
+            for(int i = 0; i < coordinates.length; i++) {
+                int diff = coordinates[i][0] - yAxis;
+                flipCoords[i][0] = - diff;
+                flipCoords[i][1] = coordinates[i][1];
+            }
+//            this.setColour(Color.RED);
+        }
+//        this.printMatrix(flipCoords);
+        return flipCoords;
     }
 
     public void setColour(Color colour) {
@@ -274,8 +347,63 @@ public class Piece {
         return _type;
     }
 
-//    public int[][][] generateVariations() {
-//
-//    }
+    public int[][] switchXAndY(int[][] coordinates) {
+        int[][] switched = new int[coordinates.length][coordinates[0].length];
+        for (int i = 0; i < coordinates.length; i++) {
+            switched[i][0] = coordinates[i][1];
+            switched[i][1] = coordinates[i][0];
+        }
+        return switched;
+    }
 
+    public boolean isEqual(int[][] M1, int[][] M2) {
+        if ((M1.length != M2.length) || (M1[0].length != M2[0].length)) {
+            return false;
+        }
+        for (int i = 0; i < M1.length; i++) {
+            if(!(Arrays.equals(M1[i], M2[i]))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public ArrayList<int[][]> generateVariations() {
+        ArrayList<int[][]> variations = new ArrayList<int[][]>();
+        int[][] orig = _type;
+        int[][] flip = this.flipInYCoordinates(_type);
+        int[][] rot1 = this.rotateCoordinates(orig, Constants.DEGREES_90);
+        int[][] rot2 = this.rotateCoordinates(orig, 2 * Constants.DEGREES_90);
+        int[][] rot3 = this.rotateCoordinates(orig, 3 * Constants.DEGREES_90);
+        int[][] flipRot1 = this.rotateCoordinates(flip, Constants.DEGREES_90);
+        int[][] flipRot2 = this.rotateCoordinates(flip, 2 * Constants.DEGREES_90);
+        int[][] flipRot3 = this.rotateCoordinates(flip, 3 * Constants.DEGREES_90);
+        variations.addAll(Arrays.asList(orig,flip,rot1,rot2,rot3,flipRot1,flipRot2,flipRot3));
+
+        ArrayList<int[][]> uniqueVars = new ArrayList<int[][]>();
+
+        for (int i = 0; i < variations.size(); i++) {
+            for (int j = 0; j < uniqueVars.size(); j++) {
+                if ((!(this.isEqual(variations.get(i), uniqueVars.get(j)))) ||
+                        (!(this.isEqual(this.switchXAndY(variations.get(i)),variations.get(j))))) {
+                    uniqueVars.add(variations.get(i));
+                }
+//                System.out.println("i: " + i + " j: " + j);
+//                System.out.println("MATRIX I");
+//                this.printMatrix(variations.get(i));
+//                System.out.println("MATRIX J");
+//                this.printMatrix(variations.get(j));
+
+//                if (i != j && (this.isEqual(variations.get(i), variations.get(j)) ||
+//                                this.isEqual(this.switchXAndY(variations.get(i)),variations.get(j)))) {
+//                    System.out.println("SOMETHING DONE");
+//                    variations.remove(j);
+//                }
+            }
+        }
+
+        return uniqueVars;
+    }
 }
+
+

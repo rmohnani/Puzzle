@@ -42,6 +42,7 @@ public class Constants {
     public static final int Y_OFFSET = 1 * CIRCLE_WIDTH;
     public static final int BOARD_X_OFFSET = 1 * CIRCLE_WIDTH;
     public static final int BOARD_Y_OFFSET = 1 * CIRCLE_WIDTH;
+    public static final double DEGREES_90 = Math.PI / 2;
     public static final double DURATION_1 = 0.5;
     public static final double DURATION_2 = 0.4;
     public static final double DURATION_3 = 0.3;
