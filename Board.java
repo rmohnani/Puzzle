@@ -16,18 +16,18 @@ public class Board {
     public Board(Pane boardPane) {
         _boardPane = boardPane;
         // logical setup
-        _gameCircleArray = new GameCircle[Constants.ROWS + 2][Constants.COLS + 2];
+        _gameCircleArray = new GameCircle[Constants.ROWS][Constants.COLS];
         for (int row = 0; row < Constants.ROWS; row++) {
             for (int col = 0; col < Constants.COLS; col++) {
-                if (!((row == 0) || (col == 0) || (row == Constants.ROWS - 1)
-                        || (col == Constants.COLS - 1))) {
-//                    _gameCircleArray[row][col] = new GameCircle(row, col , Color.RED, _gameCircleArray);
-                }
-                else {
+//                if (!((row == 0) || (col == 0) || (row == Constants.ROWS - 1)
+//                        || (col == Constants.COLS - 1))) {
+////                    _gameCircleArray[row][col] = new GameCircle(row, col , Color.RED, _gameCircleArray);
+//                }
+//                else {
 //                    _gameCircleArray[row][col] = new GameCircle(row, col , Color.RED, _gameCircleArray);
 //                    _gameCircleArray[row][col].setLocation(row, col);
                     _gameCircleArray[row][col] = null;
-                }
+//                }
             }
 
         }

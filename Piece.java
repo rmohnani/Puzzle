@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * This is the Piece Class. It is used to setup the
@@ -20,6 +21,7 @@ public class Piece {
     private int[][] _type;
     private Pane _boardPane;
     private GameCircle[][] _gameCircleArray;
+    private boolean _symmetric;
 
     /**
      * This is the Piece constructor class. It takes in a pane
@@ -33,6 +35,7 @@ public class Piece {
         _piece = null;
         _colour = null;
         _type = null;
+        _symmetric = false;
 
         // helper methods.
         this.determinePiece(num);
@@ -46,6 +49,7 @@ public class Piece {
         _boardPane = boardPane;
         _piece = null;
         _colour = null;
+        _symmetric = false;
         // helper methods.
         this.determinePiece(num);
         _type = coordinates;
@@ -64,6 +68,7 @@ public class Piece {
             case 0:
                 _type = Constants.WHITE_RIGHT_TRIANGLE;
                 _colour = Color.WHITE;
+                _symmetric = true;
                 break;
             case 1:
                 _type = Constants.DGREEN_Z_PIECE;
@@ -80,22 +85,27 @@ public class Piece {
             case 4:
                 _type = Constants.SKYBLUE_L_PIECE;
                 _colour = Color.SKYBLUE;
+                _symmetric = true;
                 break;
             case 5:
                 _type = Constants.YELLOW_U_PIECE;
                 _colour = Color.YELLOW;
+                _symmetric = true;
                 break;
             case 6:
                 _type = Constants.GRAY_PLUS_PIECE;
                 _colour = Color.GRAY;
+                _symmetric = true;
                 break;
             case 7:
                 _type = Constants.PINK_W_PIECE;
                 _colour = Color.PINK;
+                _symmetric = true;
                 break;
             case 8:
                 _type = Constants.GREEN_SQUARE_PIECE;
                 _colour = Color.GREEN;
+                _symmetric = true;
                 break;
             case 9:
                 _type = Constants.CREAM_LINEISH_PIECE;
@@ -108,6 +118,7 @@ public class Piece {
             case 11:
                 _type = Constants.PURPLE_LINE_PIECE;
                 _colour = Color.PURPLE;
+                _symmetric = true;
                 break;
         }
     }
@@ -126,14 +137,15 @@ public class Piece {
     /**
      * This is the generatePiece method. It adds the piece
      * graphically to the pane.
+     *
      * @param boardPane
      */
 
     public void generatePiece(Pane boardPane) {
         _piece = new GameCircle[_type.length];
         for (int i = 0; i < _type.length; i++) {
-            int col = (_type[i][0] + Constants.X_OFFSET) / (2 * Constants.CIRCLE_WIDTH);
-            int row = (_type[i][1] +  Constants.Y_OFFSET) / (2 * Constants.CIRCLE_WIDTH);
+            int col = (_type[i][0] + Constants.BOARD_X_OFFSET) / (2 * Constants.CIRCLE_WIDTH);
+            int row = (_type[i][1] + Constants.BOARD_Y_OFFSET) / (2 * Constants.CIRCLE_WIDTH);
             _piece[i] = new GameCircle(row, col, _colour, _gameCircleArray);
 //            System.out.println("i: " + i + " col: " + col + " row: " + row);
 //            boardPane.getChildren().addAll(_piece[i].getCirc());
@@ -180,7 +192,7 @@ public class Piece {
     public boolean isValidMove(int colChange, int rowChange) {
         boolean canMove = true;
         for (int i = 0; i < _piece.length; i++) {
-            if(!(_piece[i].canMoveTo(colChange, rowChange))) {
+            if (!(_piece[i].canMoveTo(colChange, rowChange))) {
                 canMove = false;
                 break;
             }
@@ -195,10 +207,20 @@ public class Piece {
      */
 
     public void addToBoard() {
-        for (int i= 0; i < _piece.length; i++) {
+        for (int i = 0; i < _piece.length; i++) {
             int row = _piece[i].getRow();
             int col = _piece[i].getCol();
             _gameCircleArray[row][col] = _piece[i];
+            _boardPane.getChildren().addAll(_piece[i].getCirc());
+        }
+    }
+
+    public void removeFromBoard() {
+        for (int i = 0; i < _piece.length; i++) {
+            int row = _piece[i].getRow();
+            int col = _piece[i].getCol();
+            _boardPane.getChildren().removeAll(_piece[i].getCirc());
+            _gameCircleArray[row][col] = null;
         }
     }
 
@@ -230,19 +252,18 @@ public class Piece {
 
     public void flipPosY() {
         int[][] newPos = new int[_piece.length][2];
-        int j = (int) Math.ceil(_piece.length/2);
+        int j = (int) Math.ceil(_piece.length / 2);
         if (_piece.length % 2 == 1) {
             int yAxis = _piece[j].getCol();
-            for(int i = 0; i < _piece.length; i++) {
+            for (int i = 0; i < _piece.length; i++) {
                 int diff = _piece[i].getCol() - yAxis;
                 if (diff != 0) {
                     _piece[i].translateCircleLocation(-2 * diff, 0);
                 }
             }
-        }
-        else {
+        } else {
             double yAxis = _piece[j].getCol() - 0.5;
-            for(int i = 0; i < _piece.length; i++) {
+            for (int i = 0; i < _piece.length; i++) {
                 double diff = _piece[i].getCol() - yAxis;
                 if (diff != 0) {
 //                    System.out.println("BEFORE  i: " + i + " col: " + _piece[i].getCol() + " row: " + _piece[i].getRow());
@@ -271,7 +292,7 @@ public class Piece {
         return C;
     }
 
-    public void printMatrix(int[][] matrix) {
+    public void printMatrix2D(int[][] matrix) {
         for (int row = 0; row < matrix.length; row++) {
             for (int col = 0; col < matrix[row].length; col++) {
                 System.out.printf("%4d", matrix[row][col]);
@@ -280,9 +301,17 @@ public class Piece {
         }
     }
 
+    public void printMatrix1D(int[] matrix) {
+        for (int col = 0; col < matrix.length; col++) {
+                System.out.printf("%4d", matrix[col]);
+        }
+        System.out.println();
+    }
+
     public int[][] rotateCoordinates(int[][] coordinates, double theta) {
         int[][] rotationMatrix = {{(int) Math.cos(theta), (int) -Math.sin(theta)},
-                                    {(int) Math.sin(theta), (int) -Math.cos(theta)}};
+                {(int) Math.sin(theta), (int) Math.cos(theta)}};
+        this.printMatrix2D(rotationMatrix);
         int[][] ans = this.dotProduct(coordinates, rotationMatrix);
 //        this.printMatrix(ans);
         return ans;
@@ -294,16 +323,15 @@ public class Piece {
             int yAxis = coordinates[(int) Math.ceil(coordinates.length / 2)][0];
             for (int i = 0; i < coordinates.length; i++) {
                 int diff = coordinates[i][0] - yAxis;
-                flipCoords[i][0] = - diff;
+                flipCoords[i][0] = -diff;
                 flipCoords[i][1] = coordinates[i][1];
             }
-        }
-        else {
+        } else {
             int y1 = (int) Math.ceil(coordinates.length / 2);
             int yAxis = coordinates[y1 + 1][0] - coordinates[y1][0];
-            for(int i = 0; i < coordinates.length; i++) {
+            for (int i = 0; i < coordinates.length; i++) {
                 int diff = coordinates[i][0] - yAxis;
-                flipCoords[i][0] = - diff;
+                flipCoords[i][0] = -diff;
                 flipCoords[i][1] = coordinates[i][1];
             }
 //            this.setColour(Color.RED);
@@ -347,11 +375,17 @@ public class Piece {
         return _type;
     }
 
-    public int[][] switchXAndY(int[][] coordinates) {
+    public int[][] switchXAndY(int[][] coordinates, boolean negate) {
         int[][] switched = new int[coordinates.length][coordinates[0].length];
         for (int i = 0; i < coordinates.length; i++) {
-            switched[i][0] = coordinates[i][1];
-            switched[i][1] = coordinates[i][0];
+            if (negate) {
+                switched[i][0] = -1 * coordinates[i][1];
+                switched[i][1] = -1 * coordinates[i][0];
+            }
+            else {
+                switched[i][0] = coordinates[i][1];
+                switched[i][1] = coordinates[i][0];
+            }
         }
         return switched;
     }
@@ -361,7 +395,7 @@ public class Piece {
             return false;
         }
         for (int i = 0; i < M1.length; i++) {
-            if(!(Arrays.equals(M1[i], M2[i]))) {
+            if (!(Arrays.equals(M1[i], M2[i]))) {
                 return false;
             }
         }
@@ -378,16 +412,58 @@ public class Piece {
         int[][] flipRot1 = this.rotateCoordinates(flip, Constants.DEGREES_90);
         int[][] flipRot2 = this.rotateCoordinates(flip, 2 * Constants.DEGREES_90);
         int[][] flipRot3 = this.rotateCoordinates(flip, 3 * Constants.DEGREES_90);
-        variations.addAll(Arrays.asList(orig,flip,rot1,rot2,rot3,flipRot1,flipRot2,flipRot3));
+        variations.addAll(Arrays.asList(orig, flip, rot1, rot2, rot3, flipRot1, flipRot2, flipRot3));
 
         ArrayList<int[][]> uniqueVars = new ArrayList<int[][]>();
+//        uniqueVars.add(orig);
+        for (int[][] coords : variations) {
+            uniqueVars.add(coords.clone());
+        }
+        return uniqueVars;
 
-        for (int i = 0; i < variations.size(); i++) {
-            for (int j = 0; j < uniqueVars.size(); j++) {
-                if ((!(this.isEqual(variations.get(i), uniqueVars.get(j)))) ||
-                        (!(this.isEqual(this.switchXAndY(variations.get(i)),variations.get(j))))) {
-                    uniqueVars.add(variations.get(i));
-                }
+//        for (int i = 0; i < uniqueVars.size(); i++) {
+//            for (int j = 0; j < variations.size(); j++) {
+////                if ((i != j) && ((this.isEqual(variations.get(j), uniqueVars.get(i))))) {
+//////                    uniqueVars.add(variations.get(j));
+//////                    variations.remove(j);
+////                    variations.remove(j);
+//////                    break;
+////                }
+//                if( i != j && _symmetric) {
+//                    if ((this.isEqual(variations.get(j), this.switchXAndY(uniqueVars.get(i), false)))
+//                    || (this.isEqual(variations.get(j), this.switchXAndY(uniqueVars.get(i), true)))){
+//                        uniqueVars.remove(j);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//        return uniqueVars;
+
+//        for (int i = 0; i < uniqueVars.size(); i++) {
+//            int freq = Collections.frequency(uniqueVars, uniqueVars.get(i));
+//            while (freq > 1) {
+//                uniqueVars.remove(uniqueVars.get(i));
+//            }
+//        }
+//
+//        return uniqueVars;
+
+//        for (int i = 0; i < uniqueVars.size(); i++) {
+//            for (int j = 0; j < variations.size(); j++) {
+//                if (i != j && (this.isEqual(variations.get(j), uniqueVars.get(i)))) {
+////                        || this.isEqual(this.switchXAndY(uniqueVars.get(i)), variations.get(j)))) {
+////                    System.out.println("SOMETHING DONE");
+//                    uniqueVars.remove(i);
+//                    break;
+//                }
+//            }
+//        }
+//        return uniqueVars;
+    }
+
+
+
 //                System.out.println("i: " + i + " j: " + j);
 //                System.out.println("MATRIX I");
 //                this.printMatrix(variations.get(i));
@@ -399,11 +475,11 @@ public class Piece {
 //                    System.out.println("SOMETHING DONE");
 //                    variations.remove(j);
 //                }
-            }
-        }
-
-        return uniqueVars;
-    }
+//            }
+//        }
+//
+//        return uniqueVars;
+//    }
 }
 
 

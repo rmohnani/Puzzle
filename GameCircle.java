@@ -94,12 +94,17 @@ public class GameCircle {
         int col = this.getCol();
         int row = this.getRow();
 
-        if ((col >= Constants.COLS - 1) ||
-                (col <= 0)) {
+        if ((col > Constants.COLS - 1) ||
+                (col < 0)) {
+//            return false;
             canMove = false;
         }
-        if ((row >= Constants.ROWS - 1)) {
+        if ((row > Constants.ROWS - 1)) {
             canMove = false;
+//            return false;
+        }
+        if ( (row + rowChange > Constants.ROWS - 1) || (col + colChange > Constants.COLS - 1)) {
+            return false;
         }
         if (_gameCircleArray[row + rowChange][col + colChange] != null) {
             canMove = false;
