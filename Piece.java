@@ -22,6 +22,8 @@ public class Piece {
     private Pane _boardPane;
     private GameCircle[][] _gameCircleArray;
     private boolean _symmetric;
+    private ArrayList<int[]> _possTranslations;
+    private int _num;
 
     /**
      * This is the Piece constructor class. It takes in a pane
@@ -35,11 +37,13 @@ public class Piece {
         _piece = null;
         _colour = null;
         _type = null;
+        _num = num;
         _symmetric = false;
 
         // helper methods.
-        this.determinePiece(num);
+        this.determinePiece();
         this.generatePiece(_boardPane);
+        _possTranslations = this.getAllPossibleTranslations();
 //        this.addToBoard();
 
     }
@@ -50,20 +54,31 @@ public class Piece {
         _piece = null;
         _colour = null;
         _symmetric = false;
+        _num = num;
+
         // helper methods.
-        this.determinePiece(num);
+        this.determinePiece();
         _type = coordinates;
         this.generatePiece(_boardPane);
+        _possTranslations = this.getAllPossibleTranslations();
 //        this.addToBoard();
 
+    }
+
+    public int getNum() {
+        return _num;
+    }
+
+    public ArrayList<int[]> getPossTranslations() {
+        return _possTranslations;
     }
 
     /**
      * This is the determinePiece helper method. it determines
      * randomly which of the 7 pieces it'll be and its colour.
      */
-    public void determinePiece(int num) {
-        switch (num) {
+    public void determinePiece() {
+        switch (_num) {
 
             case 0:
                 _type = Constants.WHITE_RIGHT_TRIANGLE;
@@ -124,21 +139,8 @@ public class Piece {
     }
 
     /**
-     * This is the changePane helper method. It simply moves
-     * the piece from one pane to another, which is passed in
-     * as an argument.
-     */
-
-    public void changePane(Pane newPane) {
-        // uses generatePiece method as same process.
-        this.generatePiece(newPane);
-    }
-
-    /**
      * This is the generatePiece method. It adds the piece
      * graphically to the pane.
-     *
-     * @param boardPane
      */
 
     public void generatePiece(Pane boardPane) {
@@ -153,22 +155,13 @@ public class Piece {
     }
 
     /**
-     * This is the getLength accessor method, it returns
-     * the length of the piece.
-     */
-
-    public int getLength() {
-        return _piece.length;
-    }
-
-    /**
      * This is the getSquare accessor method, it returns
      * the ith square of the piece.
      */
 
-    public GameCircle getGameCircle(int i) {
-        return _piece[i];
-    }
+//    public GameCircle getGameCircle(int i) {
+//        return _piece[i];
+//    }
 
     /**
      * This is the translatePieceLocation method, it moves
@@ -225,55 +218,8 @@ public class Piece {
     }
 
     /**
-     * This is the rotate method. it returns a 2d int array
-     * of the col and row positions of the squares in the piece
-     * after a rotation. Complicated because written in terms of row
-     * and col.
+     * Dot product code used as helper method for the rotation of coordinates.
      */
-
-    public int[][] rotPos() {
-        int[][] newPos = new int[_piece.length][2];
-        int centerOfRotationX = _piece[0].getCol() * 2 * Constants.CIRCLE_WIDTH;
-        int centerOfRotationY = _piece[0].getRow() * 2 * Constants.CIRCLE_WIDTH;
-        for (int i = 0; i < _piece.length; i++) {
-            int oldXLocation = _piece[i].getCol() * 2 * Constants.CIRCLE_WIDTH;
-            int oldYLocation = _piece[i].getRow() * 2 * Constants.CIRCLE_WIDTH;
-
-            int oldRow = oldYLocation / (2 * Constants.CIRCLE_WIDTH);
-            int oldCol = oldXLocation / (2 * Constants.CIRCLE_WIDTH);
-            int newCol = (centerOfRotationX - centerOfRotationY + oldYLocation) / (2 * Constants.CIRCLE_WIDTH);
-            int newRow = (centerOfRotationY + centerOfRotationX - oldXLocation) / (2 * Constants.CIRCLE_WIDTH);
-
-            newPos[i][0] = newCol - oldCol;
-            newPos[i][1] = newRow - oldRow;
-        }
-        return newPos;
-    }
-
-    public void flipPosY() {
-        int[][] newPos = new int[_piece.length][2];
-        int j = (int) Math.ceil(_piece.length / 2);
-        if (_piece.length % 2 == 1) {
-            int yAxis = _piece[j].getCol();
-            for (int i = 0; i < _piece.length; i++) {
-                int diff = _piece[i].getCol() - yAxis;
-                if (diff != 0) {
-                    _piece[i].translateCircleLocation(-2 * diff, 0);
-                }
-            }
-        } else {
-            double yAxis = _piece[j].getCol() - 0.5;
-            for (int i = 0; i < _piece.length; i++) {
-                double diff = _piece[i].getCol() - yAxis;
-                if (diff != 0) {
-//                    System.out.println("BEFORE  i: " + i + " col: " + _piece[i].getCol() + " row: " + _piece[i].getRow());
-                    _piece[i].translateCircleLocation((int) (-2 * diff), 0);
-//                    System.out.println("AFTER  i: " + i + " col: " + _piece[i].getCol() + " row: " + _piece[i].getRow());
-                }
-            }
-//            this.setColour(Color.RED);
-        }
-    }
 
     public int[][] dotProduct(int[][] A, int[][] B) {
         int rows_A = A.length;
@@ -292,6 +238,11 @@ public class Piece {
         return C;
     }
 
+    /**
+     * Some debugging code to print 2d or 1d matrices to compare against
+     * predicted values.
+     */
+
     public void printMatrix2D(int[][] matrix) {
         for (int row = 0; row < matrix.length; row++) {
             for (int col = 0; col < matrix[row].length; col++) {
@@ -303,17 +254,21 @@ public class Piece {
 
     public void printMatrix1D(int[] matrix) {
         for (int col = 0; col < matrix.length; col++) {
-                System.out.printf("%4d", matrix[col]);
+            System.out.printf("%4d", matrix[col]);
         }
         System.out.println();
     }
+
+    /**
+     * Currently used implementations of rotation and flipping of pieces.
+     */
 
     public int[][] rotateCoordinates(int[][] coordinates, double theta) {
         int[][] rotationMatrix = {{(int) Math.cos(theta), (int) -Math.sin(theta)},
                 {(int) Math.sin(theta), (int) Math.cos(theta)}};
         this.printMatrix2D(rotationMatrix);
         int[][] ans = this.dotProduct(coordinates, rotationMatrix);
-//        this.printMatrix(ans);
+//        this.printMatrix2D(ans);
         return ans;
     }
 
@@ -336,34 +291,21 @@ public class Piece {
             }
 //            this.setColour(Color.RED);
         }
-//        this.printMatrix(flipCoords);
+//        this.printMatrix2D(flipCoords);
         return flipCoords;
     }
+
+    /**
+     * Other debugging code to change piece colour to visually show something has worked
+     * or hasnt worked.
+     *
+     * @param colour
+     */
 
     public void setColour(Color colour) {
         for (int i = 0; i < _piece.length; i++) {
             _piece[i].setColour(colour);
         }
-    }
-
-    public void rotate() {
-        int[][] rot = this.rotPos();
-        if (this.rotationValidityCheck(rot)) {
-            for (int i = 0; i < _piece.length; i++) {
-                _piece[i].translateCircleLocation(rot[i][0], rot[i][1]);
-            }
-        }
-    }
-
-    private boolean rotationValidityCheck(int[][] rotPos) {
-        boolean rotValid = true;
-        for (int i = 1; i < _piece.length; i++) {
-            if (!(_piece[i].canMoveTo(rotPos[i][0], rotPos[i][1]))) {
-                rotValid = false;
-                break;
-            }
-        }
-        return rotValid;
     }
 
     /**
@@ -375,32 +317,36 @@ public class Piece {
         return _type;
     }
 
-    public int[][] switchXAndY(int[][] coordinates, boolean negate) {
-        int[][] switched = new int[coordinates.length][coordinates[0].length];
-        for (int i = 0; i < coordinates.length; i++) {
-            if (negate) {
-                switched[i][0] = -1 * coordinates[i][1];
-                switched[i][1] = -1 * coordinates[i][0];
-            }
-            else {
-                switched[i][0] = coordinates[i][1];
-                switched[i][1] = coordinates[i][0];
+    /**
+     * This for the current piece returns an Arraylist of 1D matrices of
+     * length 2 containing the col, row change for the piece from its
+     * initial position of 0,0 that yields a valid position of the piece.
+     * It returns a list identifying all possible valid positions the piece
+     * can take on the board.
+     */
+
+    public ArrayList<int[]> getAllPossibleTranslations() {
+        ArrayList<int[]> possTranslations = new ArrayList<int[]>();
+        for (int row = 0; row < _gameCircleArray.length - 1; row++) {
+            for (int col = 0; col < _gameCircleArray[row].length - 1; col++) {
+                if (this.isValidMove(col, row)) {
+                    int[] valid = {col, row};
+                    possTranslations.add(valid);
+                }
             }
         }
-        return switched;
+        return possTranslations;
     }
 
-    public boolean isEqual(int[][] M1, int[][] M2) {
-        if ((M1.length != M2.length) || (M1[0].length != M2[0].length)) {
-            return false;
-        }
-        for (int i = 0; i < M1.length; i++) {
-            if (!(Arrays.equals(M1[i], M2[i]))) {
-                return false;
-            }
-        }
-        return true;
-    }
+    /**
+     * This generates all the different variations (rotations and
+     * orientations of the piece that we shall consider distinct).
+     * This is a list of 8 pieces coming from an original, a flipped
+     * in the y-axis and 3 rotations for each. There are some duplicates
+     * for the symmetric pieces, which may be dealt with at a later time
+     * to reduce the computation as an optimization. But not concerned with
+     * this problem as of yet.
+     */
 
     public ArrayList<int[][]> generateVariations() {
         ArrayList<int[][]> variations = new ArrayList<int[][]>();
@@ -414,14 +360,66 @@ public class Piece {
         int[][] flipRot3 = this.rotateCoordinates(flip, 3 * Constants.DEGREES_90);
         variations.addAll(Arrays.asList(orig, flip, rot1, rot2, rot3, flipRot1, flipRot2, flipRot3));
 
-        ArrayList<int[][]> uniqueVars = new ArrayList<int[][]>();
-//        uniqueVars.add(orig);
+        // make all coordinates positive
         for (int[][] coords : variations) {
-            uniqueVars.add(coords.clone());
+            for (int i = 0; i < coords.length; i++) {
+                while (coords[i][0] < 0) {
+                    for (int j = 0; j < coords.length; j++) {
+                        coords[j][0] += 2 * Constants.CIRCLE_WIDTH;
+                    }
+                }
+                while (coords[i][1] < 0) {
+                    for (int k = 0; k < coords.length; k++) {
+                        coords[k][1] += 2 * Constants.CIRCLE_WIDTH;
+                    }
+                }
+            }
         }
-        return uniqueVars;
+        return variations;
+    }
+}
 
-//        for (int i = 0; i < uniqueVars.size(); i++) {
+    /**
+     * Code for switching x and y coordiantes of piece and negating or not.
+     * Was used in the unique piece generation, but doesnt work generally so abandoned all
+     * together along with the other unique piece code.
+     */
+
+//    public int[][] switchXAndY(int[][] coordinates, boolean negate) {
+//        int[][] switched = new int[coordinates.length][coordinates[0].length];
+//        for (int i = 0; i < coordinates.length; i++) {
+//            if (negate) {
+//                switched[i][0] = -1 * coordinates[i][1];
+//                switched[i][1] = -1 * coordinates[i][0];
+//            }
+//            else {
+//                switched[i][0] = coordinates[i][1];
+//                switched[i][1] = coordinates[i][0];
+//            }
+//        }
+//        return switched;
+//    }
+//
+//    public boolean isEqual(int[][] M1, int[][] M2) {
+//        if ((M1.length != M2.length) || (M1[0].length != M2[0].length)) {
+//            return false;
+//        }
+//        for (int i = 0; i < M1.length; i++) {
+//            if (!(Arrays.equals(M1[i], M2[i]))) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+
+    //        ArrayList<int[][]> uniqueVars = new ArrayList<int[][]>();
+//        uniqueVars.add(orig);
+//        for (int[][] coords : variations) {
+//            uniqueVars.add(coords.clone());
+//        }
+//        return uniqueVars;
+
+    //        for (int i = 0; i < uniqueVars.size(); i++) {
 //            for (int j = 0; j < variations.size(); j++) {
 ////                if ((i != j) && ((this.isEqual(variations.get(j), uniqueVars.get(i))))) {
 //////                    uniqueVars.add(variations.get(j));
@@ -460,7 +458,6 @@ public class Piece {
 //            }
 //        }
 //        return uniqueVars;
-    }
 
 
 
@@ -480,6 +477,78 @@ public class Piece {
 //
 //        return uniqueVars;
 //    }
-}
+
+
+    /**
+     * This section of commented code kind of useless, since I redid the implementation
+     * to not rotate or flip an instance of a piece but just the coordiantes of the piece
+     * so that it is more abstract and more usable than having to manage an instance of the
+     * piece class.
+     */
+
+//        public int[][] rotPos() {
+//            int[][] newPos = new int[_piece.length][2];
+//            int centerOfRotationX = _piece[0].getCol() * 2 * Constants.CIRCLE_WIDTH;
+//            int centerOfRotationY = _piece[0].getRow() * 2 * Constants.CIRCLE_WIDTH;
+//            for (int i = 0; i < _piece.length; i++) {
+//                int oldXLocation = _piece[i].getCol() * 2 * Constants.CIRCLE_WIDTH;
+//                int oldYLocation = _piece[i].getRow() * 2 * Constants.CIRCLE_WIDTH;
+//
+//                int oldRow = oldYLocation / (2 * Constants.CIRCLE_WIDTH);
+//                int oldCol = oldXLocation / (2 * Constants.CIRCLE_WIDTH);
+//                int newCol = (centerOfRotationX - centerOfRotationY + oldYLocation) / (2 * Constants.CIRCLE_WIDTH);
+//                int newRow = (centerOfRotationY + centerOfRotationX - oldXLocation) / (2 * Constants.CIRCLE_WIDTH);
+//
+//                newPos[i][0] = newCol - oldCol;
+//                newPos[i][1] = newRow - oldRow;
+//            }
+//            return newPos;
+//        }
+//
+//        public void flipPosY() {
+//            int[][] newPos = new int[_piece.length][2];
+//            int j = (int) Math.ceil(_piece.length / 2);
+//            if (_piece.length % 2 == 1) {
+//                int yAxis = _piece[j].getCol();
+//                for (int i = 0; i < _piece.length; i++) {
+//                    int diff = _piece[i].getCol() - yAxis;
+//                    if (diff != 0) {
+//                        _piece[i].translateCircleLocation(-2 * diff, 0);
+//                    }
+//                }
+//            } else {
+//                double yAxis = _piece[j].getCol() - 0.5;
+//                for (int i = 0; i < _piece.length; i++) {
+//                    double diff = _piece[i].getCol() - yAxis;
+//                    if (diff != 0) {
+//    //                    System.out.println("BEFORE  i: " + i + " col: " + _piece[i].getCol() + " row: " + _piece[i].getRow());
+//                        _piece[i].translateCircleLocation((int) (-2 * diff), 0);
+//    //                    System.out.println("AFTER  i: " + i + " col: " + _piece[i].getCol() + " row: " + _piece[i].getRow());
+//                    }
+//                }
+//    //            this.setColour(Color.RED);
+//            }
+//        }
+//
+//        public void rotate() {
+//            int[][] rot = this.rotPos();
+//            if (this.rotationValidityCheck(rot)) {
+//                for (int i = 0; i < _piece.length; i++) {
+//                    _piece[i].translateCircleLocation(rot[i][0], rot[i][1]);
+//                }
+//            }
+//        }
+//
+//        private boolean rotationValidityCheck(int[][] rotPos) {
+//            boolean rotValid = true;
+//            for (int i = 1; i < _piece.length; i++) {
+//                if (!(_piece[i].canMoveTo(rotPos[i][0], rotPos[i][1]))) {
+//                    rotValid = false;
+//                    break;
+//                }
+//            }
+//            return rotValid;
+//        }
+
 
 
