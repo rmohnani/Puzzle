@@ -24,6 +24,7 @@ public class Piece {
     private boolean _symmetric;
     private ArrayList<int[]> _possTranslations;
     private int _num;
+    private int _currentTranslation;
 
     /**
      * This is the Piece constructor class. It takes in a pane
@@ -39,6 +40,7 @@ public class Piece {
         _type = null;
         _num = num;
         _symmetric = false;
+        _currentTranslation = 0;
 
         // helper methods.
         this.determinePiece();
@@ -55,6 +57,7 @@ public class Piece {
         _colour = null;
         _symmetric = false;
         _num = num;
+        _currentTranslation = 0;
 
         // helper methods.
         this.determinePiece();
@@ -63,6 +66,14 @@ public class Piece {
         _possTranslations = this.getAllPossibleTranslations();
 //        this.addToBoard();
 
+    }
+
+    public void setCurrentTranslation(int j) {
+        _currentTranslation = j;
+    }
+
+    public int getCurrentTranslation() {
+        return _currentTranslation;
     }
 
     public int getNum() {

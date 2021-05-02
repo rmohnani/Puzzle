@@ -28,27 +28,27 @@ public class Puzzle {
         _board = new Board(_boardPane);
         _gameCircleArray = _board.getCircles();
         _board.cordonOffRightTriangle(0, 10,11,0);
-        _piece = new Piece(_boardPane, _gameCircleArray, 0);
+//        _piece = new Piece(_boardPane, _gameCircleArray, 0);
 //        _piece.addToBoard();
 //        _piece.removeFromBoard();
 ////        this.setupTimeline();
 ////        _possTranslations = this.getAllPossibleTranslations(_piece);
-        _piece2 = new Piece(_boardPane, _gameCircleArray, _piece.getNum(),_piece.generateVariations().get(1));
-        _piece2.addToBoard();
-        _possTranslations = _piece2.getAllPossibleTranslations();
-        _piece2.translatePieceLocation(_possTranslations.get(0)[0], _possTranslations.get(0)[1]);
+//        _piece2 = new Piece(_boardPane, _gameCircleArray, _piece.getNum(),_piece.generateVariations().get(1));
+//        _piece2.addToBoard();
+//        _possTranslations = _piece2.getAllPossibleTranslations();
+//        _piece2.translatePieceLocation(_possTranslations.get(0)[0], _possTranslations.get(0)[1]);
 //        this.movePiece(_piece, _possTranslations);
-        this.setupTimeline();
+//        this.setupTimeline();
 //        lis = piece.generateVariations();
 
-//        this.generateAllPieces();
-//        this.search();
+        this.generateAllPieces();
+        this.search();
 //        this.test();
     }
 
-    public void test() {
-
-    }
+//    public void test() {
+//
+//    }
 
     public void generateAllPieces() {
         for(int i = 0; i < 12; i++) {
@@ -62,30 +62,71 @@ public class Puzzle {
         }
     }
 
-//    public void search() {
-//        int outerLength = _allPieces.size();
-//        int innerLength = _allPieces.get(0).size();
-//        System.out.println(outerLength + "  " + innerLength);
-//
-//        ArrayList<Piece> workingPieces = new ArrayList<Piece>();
-//
-//        for (int piece = 0; piece < outerLength; piece++) {
-//            workingPieces.add(_allPieces.get(piece).get(0));
-//        }
-//
-//        for (int i = 0; i < workingPieces.size(); i++) {
-//            Piece currPiece = workingPieces.get(i);
-//            currPiece.addToBoard();
-//            ArrayList<int[]> possTranslations = currPiece.getPossTranslations();
+    public Piece checkPieceVariations(Piece currPiece, ArrayList<int[]> possTranslations,
+                                     ArrayList<Piece> workingPieces, int i) {
+        int j = 0;
+        while (!(currPiece.isValidMove(possTranslations.get(j)[0],possTranslations.get(j)[1]))) {
+            j += 1;
+            if (j >= possTranslations.size()) {
+                int index = 0;
+                while (currPiece != _allPieces.get(i).get(index)) {
+                    index += 1;
+                    if (index >= _allPieces.get(i).size() - 1) {
+                        System.out.println("PIECE DOES NOT FIT");
+                        return null;
+                    }
+                }
+                currPiece = _allPieces.get(i).get(index + 1);
+                workingPieces.set(i, currPiece);
+                j = 0;
+                checkPieceVariations(currPiece, currPiece.getPossTranslations(),
+                                        workingPieces, i);
+            }
+        }
+        currPiece.setCurrentTranslation(j);
+        return currPiece;
+    }
+
+    public void search() {
+        int outerLength = _allPieces.size();
+        int innerLength = _allPieces.get(0).size();
+        System.out.println(outerLength + "  " + innerLength);
+
+        ArrayList<Piece> workingPieces = new ArrayList<Piece>();
+
+        for (int piece = 0; piece < outerLength; piece++) {
+            workingPieces.add(_allPieces.get(piece).get(0));
+        }
+
+        for (int i = 0; i < workingPieces.size(); i++) {
+            Piece currPiece = workingPieces.get(i);
+            ArrayList<int[]> possTranslations = currPiece.getPossTranslations();
+
+            currPiece = this.checkPieceVariations(currPiece,possTranslations, workingPieces, i);
+            if (currPiece != null) {
+                int j = currPiece.getCurrentTranslation();
+                currPiece.translatePieceLocation(possTranslations.get(j)[0],possTranslations.get(j)[1]);
+                currPiece.addToBoard();
+            }
+
+
 //            int j = 0;
 //            while (!(currPiece.isValidMove(possTranslations.get(j)[0],possTranslations.get(j)[1]))) {
 //                j += 1;
+//                if (j >= possTranslations.size()) {
+//                    int index = 0;
+//                    while (currPiece != _allPieces.get(i).get(index)) {
+//                        index += 1;
+//                    }
+//                    workingPieces.set(i, _allPieces.get(i).get(index + 1));
+////                    return;
+//                }
 //            }
-//            currPiece.translatePieceLocation(possTranslations.get(j)[0],possTranslations.get(j)[1]);
-//
-//        }
-//
-//    }
+
+        }
+        return;
+
+    }
 
 //    public void movePiece(Piece piece, ArrayList<int[]> possTranslations) {
 //        piece.translatePieceLocation(possTranslations.get(0)[0], possTranslations.get(0)[1]);
