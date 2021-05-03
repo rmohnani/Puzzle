@@ -25,6 +25,7 @@ public class Piece {
     private ArrayList<int[]> _possTranslations;
     private int _num;
     private int _currentTranslation;
+    private boolean _changeToNextVariation;
 
     /**
      * This is the Piece constructor class. It takes in a pane
@@ -41,6 +42,7 @@ public class Piece {
         _num = num;
         _symmetric = false;
         _currentTranslation = 0;
+        _changeToNextVariation = false;
 
         // helper methods.
         this.determinePiece();
@@ -58,6 +60,7 @@ public class Piece {
         _symmetric = false;
         _num = num;
         _currentTranslation = 0;
+        _changeToNextVariation = false;
 
         // helper methods.
         this.determinePiece();
@@ -66,6 +69,14 @@ public class Piece {
         _possTranslations = this.getAllPossibleTranslations();
 //        this.addToBoard();
 
+    }
+
+    public boolean getChange() {
+        return _changeToNextVariation;
+    }
+
+    public void setChange(boolean toChange) {
+        _changeToNextVariation = toChange;
     }
 
     public void setCurrentTranslation(int j) {
@@ -82,6 +93,10 @@ public class Piece {
 
     public ArrayList<int[]> getPossTranslations() {
         return _possTranslations;
+    }
+
+    public void setPossTranslations(ArrayList<int[]> possTranslations) {
+        _possTranslations = possTranslations;
     }
 
     /**

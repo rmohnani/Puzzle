@@ -62,25 +62,42 @@ public class Puzzle {
         }
     }
 
-    public Piece checkPieceVariations(Piece currPiece, ArrayList<int[]> possTranslations,
-                                     ArrayList<Piece> workingPieces, int i) {
+    public Piece checkPieceVariations(Piece currPiece, ArrayList<Piece> workingPieces, int i) {
         int j = 0;
-        while (!(currPiece.isValidMove(possTranslations.get(j)[0],possTranslations.get(j)[1]))) {
-            j += 1;
-            if (j >= possTranslations.size()) {
-                int index = 0;
-                while (currPiece != _allPieces.get(i).get(index)) {
-                    index += 1;
-                    if (index >= _allPieces.get(i).size() - 1) {
-                        System.out.println("PIECE DOES NOT FIT");
-                        return null;
-                    }
+        currPiece.setPossTranslations(currPiece.getAllPossibleTranslations());
+        ArrayList<int[]> possTranslations = currPiece.getPossTranslations();
+
+        if (possTranslations.size() == 0) {
+            int index = 0;
+            while (currPiece != _allPieces.get(i).get(index)) {
+                index += 1;
+                if (index >= _allPieces.get(i).size() - 1) {
+                    System.out.println("PIECE DOES NOT FIT: " + i);
+                    return null;
                 }
-                currPiece = _allPieces.get(i).get(index + 1);
-                workingPieces.set(i, currPiece);
-                j = 0;
-                checkPieceVariations(currPiece, currPiece.getPossTranslations(),
-                                        workingPieces, i);
+            }
+            currPiece = _allPieces.get(i).get(index + 1);
+            workingPieces.set(i, currPiece);
+            j = 0;
+            checkPieceVariations(currPiece, workingPieces, i);
+        }
+        else {
+            while (!(currPiece.isValidMove(possTranslations.get(j)[0],possTranslations.get(j)[1]))) {
+                j += 1;
+                if (j >= possTranslations.size()) {
+                    int index = 0;
+                    while (currPiece != _allPieces.get(i).get(index)) {
+                        index += 1;
+                        if (index >= _allPieces.get(i).size() - 1) {
+                            System.out.println("PIECE DOES NOT FIT: " + i);
+                            return null;
+                        }
+                    }
+                    currPiece = _allPieces.get(i).get(index + 1);
+                    workingPieces.set(i, currPiece);
+                    j = 0;
+                    checkPieceVariations(currPiece, workingPieces, i);
+                }
             }
         }
         currPiece.setCurrentTranslation(j);
@@ -97,16 +114,40 @@ public class Puzzle {
         for (int piece = 0; piece < outerLength; piece++) {
             workingPieces.add(_allPieces.get(piece).get(0));
         }
+        int i = 0;
+        while (i < workingPieces.size()) {
 
-        for (int i = 0; i < workingPieces.size(); i++) {
+//        }
+//
+//        for (int i = 0; i < workingPieces.size(); i++) {
             Piece currPiece = workingPieces.get(i);
-            ArrayList<int[]> possTranslations = currPiece.getPossTranslations();
+            if (currPiece.getChange()) {
+                int index = 0;
+                while (currPiece != _allPieces.get(i).get(index)) {
+                    index += 1;
+                }
+                currPiece = _allPieces.get(i).get(index + 1);
+                while (currPiece.getAllPossibleTranslations().size() == 0 && index < 7) {
+                    index += 1;
+                    currPiece = _allPieces.get(i).get(index);
+                }
+//                currPiece = _allPieces.get(i).get(index + 1);
+                workingPieces.set(i, currPiece);
+            }
 
-            currPiece = this.checkPieceVariations(currPiece,possTranslations, workingPieces, i);
-            if (currPiece != null) {
-                int j = currPiece.getCurrentTranslation();
+            currPiece = this.checkPieceVariations(currPiece, workingPieces, i);
+//            if (currPiece != null) {
+            int j = currPiece.getCurrentTranslation();
+            ArrayList<int[]> possTranslations = currPiece.getPossTranslations();
+            if (possTranslations.size() > 0) {
                 currPiece.translatePieceLocation(possTranslations.get(j)[0],possTranslations.get(j)[1]);
                 currPiece.addToBoard();
+                i += 1;
+            }
+//            }
+            else {
+                i -= 1;
+                workingPieces.get(i).setChange(true);
             }
 
 
@@ -125,7 +166,6 @@ public class Puzzle {
 
         }
         return;
-
     }
 
 //    public void movePiece(Piece piece, ArrayList<int[]> possTranslations) {
