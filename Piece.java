@@ -5,7 +5,6 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * This is the Piece Class. It is used to setup the
@@ -26,6 +25,11 @@ public class Piece {
     private int _num;
     private int _currentTranslation;
     private boolean _changeToNextVariation;
+    private boolean _changeToNextPossiblePosition;
+    private ArrayList<int[][]> _variations;
+    public int _currentVariation;
+    private int _pieceCol;
+    private int _pieceRow;
 
     /**
      * This is the Piece constructor class. It takes in a pane
@@ -33,49 +37,100 @@ public class Piece {
      * which of the 12 types of pieces it is, and to add the piece graphically.
      */
 
-    public Piece(Pane boardPane, GameCircle[][] board, int num) {
+    public Piece(Pane boardPane, GameCircle[][] board, int num, int var) {
         _gameCircleArray = board;
         _boardPane = boardPane;
         _piece = null;
         _colour = null;
-        _type = null;
         _num = num;
         _symmetric = false;
         _currentTranslation = 0;
         _changeToNextVariation = false;
-
-        // helper methods.
+        _changeToNextPossiblePosition = true;
+        _currentVariation = var;
+        _pieceRow = 0;
+        _pieceCol = 0;
         this.determinePiece();
+        _variations = this.generateVariations();
+        _type = _variations.get(_currentVariation);
+
+
+
         this.generatePiece(_boardPane);
         _possTranslations = this.getAllPossibleTranslations();
+
+        // helper methods.
 //        this.addToBoard();
 
     }
 
-    public Piece(Pane boardPane, GameCircle[][] board, int num, int[][] coordinates) {
-        _gameCircleArray = board;
-        _boardPane = boardPane;
-        _piece = null;
-        _colour = null;
-        _symmetric = false;
-        _num = num;
-        _currentTranslation = 0;
-        _changeToNextVariation = false;
-
-        // helper methods.
-        this.determinePiece();
-        _type = coordinates;
-        this.generatePiece(_boardPane);
-        _possTranslations = this.getAllPossibleTranslations();
-//        this.addToBoard();
-
+    public void setPieceCol(int col) {
+        _pieceCol = col;
     }
 
-    public boolean getChange() {
+    public void setPieceRow(int row) {
+        _pieceRow = row;
+    }
+
+    public int getPieceCol() {
+        return _pieceCol;
+    }
+
+    public int getPieceRow() {
+        return _pieceRow;
+    }
+
+//    public Piece(Pane boardPane, GameCircle[][] board, int num, int[][] coordinates) {
+//        _gameCircleArray = board;
+//        _boardPane = boardPane;
+//        _piece = null;
+//        _colour = null;
+//        _symmetric = false;
+//        _num = num;
+//        _currentTranslation = 0;
+//        _changeToNextVariation = false;
+//        _changeToNextPossiblePosition = false;
+//
+//        // helper methods.
+//        this.determinePiece();
+//        _type = coordinates;
+//        this.generatePiece(_boardPane);
+//        _possTranslations = this.getAllPossibleTranslations();
+////        this.addToBoard();
+//
+//    }
+
+    public Piece changeVariation(int i) {
+        this.removeFromBoard();
+        _currentVariation = i;
+        return new Piece(_boardPane, _gameCircleArray, _num, _currentVariation);
+    }
+
+    public void setCurrentVariation(int i) {
+        _currentVariation = i;
+    }
+
+    public int getCurrentVariation() {
+        return _currentVariation;
+    }
+
+    public ArrayList<int[][]> getVariations() {
+        return _variations;
+    }
+
+    public boolean getChangeTranslationBool() {
+        return _changeToNextPossiblePosition;
+    }
+
+    public void setChangeTranslationBool(boolean toChange) {
+        _changeToNextPossiblePosition = toChange;
+    }
+
+    public boolean getChangeVariationBool() {
         return _changeToNextVariation;
     }
 
-    public void setChange(boolean toChange) {
+    public void setChangeVariationBool(boolean toChange) {
         _changeToNextVariation = toChange;
     }
 
@@ -230,7 +285,9 @@ public class Piece {
             int row = _piece[i].getRow();
             int col = _piece[i].getCol();
             _gameCircleArray[row][col] = _piece[i];
-            _boardPane.getChildren().addAll(_piece[i].getCirc());
+            if (!(_boardPane.getChildren().contains(_piece[i].getCirc()))) {
+                _boardPane.getChildren().addAll(_piece[i].getCirc());
+            }
         }
     }
 
@@ -239,7 +296,12 @@ public class Piece {
             int row = _piece[i].getRow();
             int col = _piece[i].getCol();
             _boardPane.getChildren().removeAll(_piece[i].getCirc());
-            _gameCircleArray[row][col] = null;
+            if (row + col <= 9) {
+                _gameCircleArray[row][col] = new GameCircle(row, col, Color.RED, _gameCircleArray);
+            }
+            else {
+                _gameCircleArray[row][col] = null;
+            }
         }
     }
 
@@ -292,7 +354,7 @@ public class Piece {
     public int[][] rotateCoordinates(int[][] coordinates, double theta) {
         int[][] rotationMatrix = {{(int) Math.cos(theta), (int) -Math.sin(theta)},
                 {(int) Math.sin(theta), (int) Math.cos(theta)}};
-        this.printMatrix2D(rotationMatrix);
+//        this.printMatrix2D(rotationMatrix);
         int[][] ans = this.dotProduct(coordinates, rotationMatrix);
 //        this.printMatrix2D(ans);
         return ans;
@@ -352,10 +414,13 @@ public class Piece {
      */
 
     public ArrayList<int[]> getAllPossibleTranslations() {
+        this.removeFromBoard();
         ArrayList<int[]> possTranslations = new ArrayList<int[]>();
-        for (int row = 0; row < _gameCircleArray.length - 1; row++) {
-            for (int col = 0; col < _gameCircleArray[row].length - 1; col++) {
-                if (this.isValidMove(col, row)) {
+        for (int row = - _pieceRow; row < _gameCircleArray.length - 1 - _pieceRow; row++) {
+            for (int col = - _pieceCol; col < _gameCircleArray[0].length - 1 - _pieceCol; col++) {
+                if (this.isValidMove(col, row)
+                ) {
+//                        && (col != 0 && row != 0)) {
                     int[] valid = {col, row};
                     possTranslations.add(valid);
                 }

@@ -103,7 +103,8 @@ public class GameCircle {
             canMove = false;
 //            return false;
         }
-        if ( (row + rowChange > Constants.ROWS - 1) || (col + colChange > Constants.COLS - 1)) {
+        if ( (row + rowChange > Constants.ROWS - 1) || (col + colChange > Constants.COLS - 1)
+            || (row + rowChange < 0) || (col + colChange < 0)) {
             return false;
         }
         if (_gameCircleArray[row + rowChange][col + colChange] != null) {
