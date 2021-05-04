@@ -86,8 +86,7 @@ public class Board {
 
     public void level3_1() {
         for (int j = 0; j < _gameCircleArray.length; j++) {
-            for (int i = 6
-                 ; i < _gameCircleArray[0].length; i++) {
+            for (int i = 6; i < _gameCircleArray[0].length; i++) {
 
                 _gameCircleArray[j][i] = new GameCircle(j, i, Color.RED, _gameCircleArray);
                 _gameCircleArray[j][i].setLocation(j, i);
