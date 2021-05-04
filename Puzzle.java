@@ -30,6 +30,8 @@ public class Puzzle {
         _board = new Board(_boardPane);
         _gameCircleArray = _board.getCircles();
         _board.cordonOffRightTriangle(0, 10,11,0);
+        _board.hardCodedPuzzleInitial();
+//        _board.level3_1();
 //        _piece = new Piece(_boardPane, _gameCircleArray, 7,1);
 //        _piece.addToBoard();
 //        ArrayList<int[]> trans = _piece.getAllPossibleTranslations();
@@ -56,20 +58,20 @@ public class Puzzle {
 //        this.test();
     }
 
-    public void generateAllPieces() {
-        for(int i = 0; i < 12; i++) {
-            Piece piece = new Piece(_boardPane, _gameCircleArray, i, 0);
-            ArrayList<Piece> piecePossibilities = new ArrayList<Piece>();
-            ArrayList<int[][]> variations = piece.generateVariations();
-            for(int j = 0; j < variations.size(); j++) {
-                piecePossibilities.add(piece.changeVariation(j));
-            }
-            _allPieces.add(piecePossibilities);
-        }
-    }
+//    public void generateAllPieces() {
+//        for(int i = 0; i < 12; i++) {
+//            Piece piece = new Piece(_boardPane, _gameCircleArray, i, 0);
+//            ArrayList<Piece> piecePossibilities = new ArrayList<Piece>();
+//            ArrayList<int[][]> variations = piece.generateVariations();
+//            for(int j = 0; j < variations.size(); j++) {
+//                piecePossibilities.add(piece.changeVariation(j));
+//            }
+//            _allPieces.add(piecePossibilities);
+//        }
+//    }
 
     public void generateAllPieces2() {
-        for(int i = 0; i < 12; i++) {
+        for(int i = 0; i < 8; i++) {
             Piece piece = new Piece(_boardPane, _gameCircleArray, i, 0);
             _allPieces2.add(piece);
         }
@@ -78,7 +80,7 @@ public class Puzzle {
     public void search() {
 
         int i = 0;
-        while (i < _allPieces2.size() - 4) {
+        while (i < _allPieces2.size()) {
             System.out.println("Current i: " + i);
             Piece currPiece = _allPieces2.get(i);
 //            currPiece.addToBoard();
@@ -101,24 +103,6 @@ public class Puzzle {
                         currPiece.setPossTranslations(currPiece.getAllPossibleTranslations());
                         currPiece.setChangeVariationBool(false);
                     }
-//                    if (currPiece.getAllPossibleTranslations().size() == 1 &&
-//                            (currPiece.getAllPossibleTranslations().get(0)[0] == 0 &&
-//                                    currPiece.getAllPossibleTranslations().get(0)[1] == 0)) {
-//                        currPiece.removeFromBoard();
-//                        currPiece.setCurrentVariation(0);
-//                        currPiece = currPiece.changeVariation(currPiece.getCurrentVariation());
-//                        currPiece.setChangeVariationBool(false);
-//
-//
-//                        i -= 1;
-//                        currPiece = _allPieces2.get(i);
-//                        if (currPiece.getCurrentTranslation() < currPiece.getPossTranslations().size()) {
-//                            currPiece.setChangeTranslationBool(true);
-//                        } else {
-//                            currPiece.setChangeVariationBool(true);
-//                        }
-//
-//                    }
                     else {
 
                         /**
@@ -126,7 +110,7 @@ public class Puzzle {
                          * then piece has no valid placement on current board, so need to go
                          * back to piece before (i - 1) and change its variation to next one.
                          */
-                        currPiece.removeFromBoard();
+//                        currPiece.removeFromBoard();
                         currPiece.setCurrentVariation(0);
                         currPiece = currPiece.changeVariation(currPiece.getCurrentVariation());
                         currPiece.setChangeVariationBool(false);
@@ -134,13 +118,31 @@ public class Puzzle {
 
                         i -= 1;
                         currPiece = _allPieces2.get(i);
-                        if (currPiece.getCurrentTranslation() < currPiece.getPossTranslations().size()) {
+                        if (currPiece.getCurrentTranslation() < currPiece.getPossTranslations().size() - 1) {
                             currPiece.setChangeTranslationBool(true);
                         } else {
                             currPiece.setChangeVariationBool(true);
                         }
                     }
 
+                }
+                else {
+//                    currPiece.removeFromBoard();
+
+                    currPiece.setCurrentVariation(0);
+                    currPiece = currPiece.changeVariation(currPiece.getCurrentVariation());
+                    currPiece.setChangeVariationBool(false);
+                    _allPieces2.set(i,currPiece);
+
+
+                    i -= 1;
+                    currPiece = _allPieces2.get(i);
+//                    currPiece.setChangeVariationBool(true);
+                    if (currPiece.getCurrentTranslation() < currPiece.getPossTranslations().size() - 1) {
+                        currPiece.setChangeTranslationBool(true);
+                    } else {
+                        currPiece.setChangeVariationBool(true);
+                    }
                 }
 
             }
@@ -157,8 +159,9 @@ public class Puzzle {
                     currPiece.setChangeVariationBool(true);
                 }
                 else {
-                    if ((possTranslations.get(currPiece.getCurrentTranslation())[0] == 0) &&
-                            (possTranslations.get(currPiece.getCurrentTranslation())[1] == 0)) {
+                    if (((possTranslations.get(currPiece.getCurrentTranslation())[0] == 0) &&
+                            (possTranslations.get(currPiece.getCurrentTranslation())[1] == 0))
+                     && (currPiece.getCurrentTranslation() < possTranslations.size() - 1)) {
                         currPiece.setCurrentTranslation(currPiece.getCurrentTranslation() + 1);
                     }
                     while ((!(currPiece.isValidMove(possTranslations.get(currPiece.getCurrentTranslation())[0],
@@ -183,6 +186,7 @@ public class Puzzle {
                         currPiece.translatePieceLocation(possTranslations.get(j)[0], possTranslations.get(j)[1]);
                         currPiece.addToBoard();
                         currPiece.setChangeTranslationBool(false);
+//                        currPiece.setChangeVariationBool(false);
                         i += 1;
                     }
                 }

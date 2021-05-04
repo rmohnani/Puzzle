@@ -161,57 +161,57 @@ public class Piece {
     public void determinePiece() {
         switch (_num) {
 
+//            case 0:
+//                _type = Constants.WHITE_RIGHT_TRIANGLE;
+//                _colour = Color.WHITE;
+//                _symmetric = true;
+//                break;
+//            case 1:
+//                _type = Constants.DGREEN_Z_PIECE;
+//                _colour = Color.DARKGREEN;
+//                break;
+//            case 2:
+//                _type = Constants.BLUE_L_PIECE;
+//                _colour = Color.BLUE;
+//                break;
+//            case 3:
+//                _type = Constants.ORANGE_L_PIECE;
+//                _colour = Color.ORANGE;
+//                break;
             case 0:
-                _type = Constants.WHITE_RIGHT_TRIANGLE;
-                _colour = Color.WHITE;
-                _symmetric = true;
-                break;
-            case 1:
-                _type = Constants.DGREEN_Z_PIECE;
-                _colour = Color.DARKGREEN;
-                break;
-            case 2:
-                _type = Constants.BLUE_L_PIECE;
-                _colour = Color.BLUE;
-                break;
-            case 3:
-                _type = Constants.ORANGE_L_PIECE;
-                _colour = Color.ORANGE;
-                break;
-            case 4:
                 _type = Constants.SKYBLUE_L_PIECE;
                 _colour = Color.SKYBLUE;
                 _symmetric = true;
                 break;
-            case 5:
+            case 1:
                 _type = Constants.YELLOW_U_PIECE;
                 _colour = Color.YELLOW;
                 _symmetric = true;
                 break;
-            case 6:
+            case 2:
                 _type = Constants.GRAY_PLUS_PIECE;
                 _colour = Color.GRAY;
                 _symmetric = true;
                 break;
-            case 7:
+            case 3:
                 _type = Constants.PINK_W_PIECE;
                 _colour = Color.PINK;
                 _symmetric = true;
                 break;
-            case 8:
+            case 4:
                 _type = Constants.GREEN_SQUARE_PIECE;
                 _colour = Color.GREEN;
                 _symmetric = true;
                 break;
-            case 9:
+            case 5:
                 _type = Constants.CREAM_LINEISH_PIECE;
                 _colour = Color.BISQUE;
                 break;
-            case 10:
+            case 6:
                 _type = Constants.RED_SQUAREISH_PIECE;
                 _colour = Color.CYAN;
                 break;
-            case 11:
+            case 7:
                 _type = Constants.PURPLE_LINE_PIECE;
                 _colour = Color.PURPLE;
                 _symmetric = true;

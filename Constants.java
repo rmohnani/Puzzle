@@ -36,6 +36,8 @@ public class Constants {
     public static final int[][] PURPLE_LINE_PIECE = {{0, 0}, {0, 2 * CIRCLE_WIDTH}, {0, 4 * CIRCLE_WIDTH}, {0, 6 * CIRCLE_WIDTH}};
 
 
+    public static final int[][] BLOCKED_OFF = {{}};
+
     public static final int BOARD_WIDTH = 440;
     public static final int BOARD_HEIGHT = 400;
     public static final int X_OFFSET = 5 * CIRCLE_WIDTH;
