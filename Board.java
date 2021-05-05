@@ -96,6 +96,48 @@ public class Board {
         }
     }
 
+    public void level6_06() {
+        for (int j = 0; j < _gameCircleArray.length; j++) {
+            for (int i = 8; i < _gameCircleArray[0].length; i++) {
+
+                _gameCircleArray[j][i] = new GameCircle(j, i, Color.RED, _gameCircleArray);
+                _gameCircleArray[j][i].setLocation(j, i);
+                _boardPane.getChildren().add(
+                        _gameCircleArray[j][i].getCirc());
+            }
+        }
+        _gameCircleArray[3][7] = new GameCircle(3, 7, Color.RED, _gameCircleArray);
+        _gameCircleArray[3][7].setLocation(3, 7);
+        _boardPane.getChildren().add(
+                _gameCircleArray[3][7].getCirc());
+    }
+
+    public void level7_14() {
+        for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < _gameCircleArray[0].length; i++) {
+
+                _gameCircleArray[j][i] = new GameCircle(j, i, Color.RED, _gameCircleArray);
+                _gameCircleArray[j][i].setLocation(j, i);
+                _boardPane.getChildren().add(
+                        _gameCircleArray[j][i].getCirc());
+            }
+        }
+        for (int j = 0; j < _gameCircleArray.length; j++) {
+            for (int i = 9; i < _gameCircleArray[0].length; i++) {
+
+                _gameCircleArray[j][i] = new GameCircle(j, i, Color.RED, _gameCircleArray);
+                _gameCircleArray[j][i].setLocation(j, i);
+                _boardPane.getChildren().add(
+                        _gameCircleArray[j][i].getCirc());
+            }
+        }
+        _gameCircleArray[9][8] = new GameCircle(9, 8, Color.RED, _gameCircleArray);
+        _gameCircleArray[9][8].setLocation(9, 8);
+        _boardPane.getChildren().add(
+                _gameCircleArray[9][8].getCirc());
+
+    }
+
 
     /**
      * This is the setUpBoardPane helper method. It simply

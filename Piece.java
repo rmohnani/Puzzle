@@ -52,6 +52,7 @@ public class Piece {
         _pieceCol = 0;
         this.determinePiece();
         _variations = this.generateVariations();
+//        this.getUniqueVariations();
         _type = _variations.get(_currentVariation);
 
 
@@ -79,26 +80,6 @@ public class Piece {
     public int getPieceRow() {
         return _pieceRow;
     }
-
-//    public Piece(Pane boardPane, GameCircle[][] board, int num, int[][] coordinates) {
-//        _gameCircleArray = board;
-//        _boardPane = boardPane;
-//        _piece = null;
-//        _colour = null;
-//        _symmetric = false;
-//        _num = num;
-//        _currentTranslation = 0;
-//        _changeToNextVariation = false;
-//        _changeToNextPossiblePosition = false;
-//
-//        // helper methods.
-//        this.determinePiece();
-//        _type = coordinates;
-//        this.generatePiece(_boardPane);
-//        _possTranslations = this.getAllPossibleTranslations();
-////        this.addToBoard();
-//
-//    }
 
     public Piece changeVariation(int i) {
         this.removeFromBoard();
@@ -161,57 +142,57 @@ public class Piece {
     public void determinePiece() {
         switch (_num) {
 
-//            case 0:
-//                _type = Constants.WHITE_RIGHT_TRIANGLE;
-//                _colour = Color.WHITE;
-//                _symmetric = true;
-//                break;
-//            case 1:
-//                _type = Constants.DGREEN_Z_PIECE;
-//                _colour = Color.DARKGREEN;
-//                break;
-//            case 2:
-//                _type = Constants.BLUE_L_PIECE;
-//                _colour = Color.BLUE;
-//                break;
-//            case 3:
-//                _type = Constants.ORANGE_L_PIECE;
-//                _colour = Color.ORANGE;
-//                break;
             case 0:
+                _type = Constants.WHITE_RIGHT_TRIANGLE;
+                _colour = Color.WHITE;
+                _symmetric = true;
+                break;
+            case 1:
+                _type = Constants.DGREEN_Z_PIECE;
+                _colour = Color.DARKGREEN;
+                break;
+            case 2:
+                _type = Constants.BLUE_L_PIECE;
+                _colour = Color.BLUE;
+                break;
+            case 3:
+                _type = Constants.ORANGE_L_PIECE;
+                _colour = Color.ORANGE;
+                break;
+            case 4:
                 _type = Constants.SKYBLUE_L_PIECE;
                 _colour = Color.SKYBLUE;
                 _symmetric = true;
                 break;
-            case 1:
+            case 5:
                 _type = Constants.YELLOW_U_PIECE;
                 _colour = Color.YELLOW;
                 _symmetric = true;
                 break;
-            case 2:
+            case 6:
                 _type = Constants.GRAY_PLUS_PIECE;
                 _colour = Color.GRAY;
                 _symmetric = true;
                 break;
-            case 3:
+            case 7:
                 _type = Constants.PINK_W_PIECE;
                 _colour = Color.PINK;
                 _symmetric = true;
                 break;
-            case 4:
+            case 8:
                 _type = Constants.GREEN_SQUARE_PIECE;
                 _colour = Color.GREEN;
                 _symmetric = true;
                 break;
-            case 5:
+            case 9:
                 _type = Constants.CREAM_LINEISH_PIECE;
                 _colour = Color.BISQUE;
                 break;
-            case 6:
+            case 10:
                 _type = Constants.RED_SQUAREISH_PIECE;
                 _colour = Color.CYAN;
                 break;
-            case 7:
+            case 11:
                 _type = Constants.PURPLE_LINE_PIECE;
                 _colour = Color.PURPLE;
                 _symmetric = true;
@@ -418,9 +399,7 @@ public class Piece {
         ArrayList<int[]> possTranslations = new ArrayList<int[]>();
         for (int row = - _pieceRow; row < _gameCircleArray.length - 1 - _pieceRow; row++) {
             for (int col = - _pieceCol; col < _gameCircleArray[0].length - 1 - _pieceCol; col++) {
-                if (this.isValidMove(col, row)
-                ) {
-//                        && (col != 0 && row != 0)) {
+                if (this.isValidMove(col, row)) {
                     int[] valid = {col, row};
                     possTranslations.add(valid);
                 }
@@ -468,178 +447,59 @@ public class Piece {
         }
         return variations;
     }
+
+    public GameCircle[] getPiece() {
+        return _piece;
+    }
+
+    public boolean completelyContains(Piece otherPiece) {
+        boolean doesContain = true;
+        if (this.getType().length != otherPiece.getType().length) {
+            return false;
+        }
+        else {
+            GameCircle[] other = otherPiece.getPiece();
+            for (int i = 0; i < this.getType().length; i++) {
+                boolean isCircleInside = false;
+                for (int j = 0; j < this.getType().length; j++) {
+                    if (_piece[i].contains(other[j])) {
+                        isCircleInside = true;
+                        break;
+                    }
+                }
+                doesContain = doesContain && isCircleInside;
+                if (!(doesContain)) {
+                    return false;
+                }
+
+            }
+        }
+        return doesContain;
+    }
+
+    public void getUniqueVariations() {
+        ArrayList<Piece> allPieces = new ArrayList<Piece>();
+        for (int i = 0; i < _variations.size(); i++) {
+//            System.out.println("I: " + i);
+            allPieces.add(new Piece (_boardPane, _gameCircleArray,_num, i));
+//            this.printMatrix2D(_variations.get(i));
+        }
+        for (int j = 0; j < allPieces.size(); j++) {
+            for (int k = 0; k < allPieces.size(); k++) {
+                if (j != k) {
+                    if ((allPieces.get(j)).completelyContains((allPieces.get(k)))) {
+                        allPieces.remove(k);
+                        _variations.remove(k);
+                        k-= 1;
+                    }
+                }
+            }
+        }
+//        System.out.println(allPieces.size());
+//        System.out.println(_variations.size());
+//        for (int l = 0; l < _variations.size(); l++) {
+//            this.printMatrix2D(_variations.get(l));
+//
+//        }
+    }
 }
-
-    /**
-     * Code for switching x and y coordiantes of piece and negating or not.
-     * Was used in the unique piece generation, but doesnt work generally so abandoned all
-     * together along with the other unique piece code.
-     */
-
-//    public int[][] switchXAndY(int[][] coordinates, boolean negate) {
-//        int[][] switched = new int[coordinates.length][coordinates[0].length];
-//        for (int i = 0; i < coordinates.length; i++) {
-//            if (negate) {
-//                switched[i][0] = -1 * coordinates[i][1];
-//                switched[i][1] = -1 * coordinates[i][0];
-//            }
-//            else {
-//                switched[i][0] = coordinates[i][1];
-//                switched[i][1] = coordinates[i][0];
-//            }
-//        }
-//        return switched;
-//    }
-//
-//    public boolean isEqual(int[][] M1, int[][] M2) {
-//        if ((M1.length != M2.length) || (M1[0].length != M2[0].length)) {
-//            return false;
-//        }
-//        for (int i = 0; i < M1.length; i++) {
-//            if (!(Arrays.equals(M1[i], M2[i]))) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-
-    //        ArrayList<int[][]> uniqueVars = new ArrayList<int[][]>();
-//        uniqueVars.add(orig);
-//        for (int[][] coords : variations) {
-//            uniqueVars.add(coords.clone());
-//        }
-//        return uniqueVars;
-
-    //        for (int i = 0; i < uniqueVars.size(); i++) {
-//            for (int j = 0; j < variations.size(); j++) {
-////                if ((i != j) && ((this.isEqual(variations.get(j), uniqueVars.get(i))))) {
-//////                    uniqueVars.add(variations.get(j));
-//////                    variations.remove(j);
-////                    variations.remove(j);
-//////                    break;
-////                }
-//                if( i != j && _symmetric) {
-//                    if ((this.isEqual(variations.get(j), this.switchXAndY(uniqueVars.get(i), false)))
-//                    || (this.isEqual(variations.get(j), this.switchXAndY(uniqueVars.get(i), true)))){
-//                        uniqueVars.remove(j);
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        return uniqueVars;
-
-//        for (int i = 0; i < uniqueVars.size(); i++) {
-//            int freq = Collections.frequency(uniqueVars, uniqueVars.get(i));
-//            while (freq > 1) {
-//                uniqueVars.remove(uniqueVars.get(i));
-//            }
-//        }
-//
-//        return uniqueVars;
-
-//        for (int i = 0; i < uniqueVars.size(); i++) {
-//            for (int j = 0; j < variations.size(); j++) {
-//                if (i != j && (this.isEqual(variations.get(j), uniqueVars.get(i)))) {
-////                        || this.isEqual(this.switchXAndY(uniqueVars.get(i)), variations.get(j)))) {
-////                    System.out.println("SOMETHING DONE");
-//                    uniqueVars.remove(i);
-//                    break;
-//                }
-//            }
-//        }
-//        return uniqueVars;
-
-
-
-//                System.out.println("i: " + i + " j: " + j);
-//                System.out.println("MATRIX I");
-//                this.printMatrix(variations.get(i));
-//                System.out.println("MATRIX J");
-//                this.printMatrix(variations.get(j));
-
-//                if (i != j && (this.isEqual(variations.get(i), variations.get(j)) ||
-//                                this.isEqual(this.switchXAndY(variations.get(i)),variations.get(j)))) {
-//                    System.out.println("SOMETHING DONE");
-//                    variations.remove(j);
-//                }
-//            }
-//        }
-//
-//        return uniqueVars;
-//    }
-
-
-    /**
-     * This section of commented code kind of useless, since I redid the implementation
-     * to not rotate or flip an instance of a piece but just the coordiantes of the piece
-     * so that it is more abstract and more usable than having to manage an instance of the
-     * piece class.
-     */
-
-//        public int[][] rotPos() {
-//            int[][] newPos = new int[_piece.length][2];
-//            int centerOfRotationX = _piece[0].getCol() * 2 * Constants.CIRCLE_WIDTH;
-//            int centerOfRotationY = _piece[0].getRow() * 2 * Constants.CIRCLE_WIDTH;
-//            for (int i = 0; i < _piece.length; i++) {
-//                int oldXLocation = _piece[i].getCol() * 2 * Constants.CIRCLE_WIDTH;
-//                int oldYLocation = _piece[i].getRow() * 2 * Constants.CIRCLE_WIDTH;
-//
-//                int oldRow = oldYLocation / (2 * Constants.CIRCLE_WIDTH);
-//                int oldCol = oldXLocation / (2 * Constants.CIRCLE_WIDTH);
-//                int newCol = (centerOfRotationX - centerOfRotationY + oldYLocation) / (2 * Constants.CIRCLE_WIDTH);
-//                int newRow = (centerOfRotationY + centerOfRotationX - oldXLocation) / (2 * Constants.CIRCLE_WIDTH);
-//
-//                newPos[i][0] = newCol - oldCol;
-//                newPos[i][1] = newRow - oldRow;
-//            }
-//            return newPos;
-//        }
-//
-//        public void flipPosY() {
-//            int[][] newPos = new int[_piece.length][2];
-//            int j = (int) Math.ceil(_piece.length / 2);
-//            if (_piece.length % 2 == 1) {
-//                int yAxis = _piece[j].getCol();
-//                for (int i = 0; i < _piece.length; i++) {
-//                    int diff = _piece[i].getCol() - yAxis;
-//                    if (diff != 0) {
-//                        _piece[i].translateCircleLocation(-2 * diff, 0);
-//                    }
-//                }
-//            } else {
-//                double yAxis = _piece[j].getCol() - 0.5;
-//                for (int i = 0; i < _piece.length; i++) {
-//                    double diff = _piece[i].getCol() - yAxis;
-//                    if (diff != 0) {
-//    //                    System.out.println("BEFORE  i: " + i + " col: " + _piece[i].getCol() + " row: " + _piece[i].getRow());
-//                        _piece[i].translateCircleLocation((int) (-2 * diff), 0);
-//    //                    System.out.println("AFTER  i: " + i + " col: " + _piece[i].getCol() + " row: " + _piece[i].getRow());
-//                    }
-//                }
-//    //            this.setColour(Color.RED);
-//            }
-//        }
-//
-//        public void rotate() {
-//            int[][] rot = this.rotPos();
-//            if (this.rotationValidityCheck(rot)) {
-//                for (int i = 0; i < _piece.length; i++) {
-//                    _piece[i].translateCircleLocation(rot[i][0], rot[i][1]);
-//                }
-//            }
-//        }
-//
-//        private boolean rotationValidityCheck(int[][] rotPos) {
-//            boolean rotValid = true;
-//            for (int i = 1; i < _piece.length; i++) {
-//                if (!(_piece[i].canMoveTo(rotPos[i][0], rotPos[i][1]))) {
-//                    rotValid = false;
-//                    break;
-//                }
-//            }
-//            return rotValid;
-//        }
-
-
-

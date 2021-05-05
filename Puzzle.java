@@ -30,17 +30,21 @@ public class Puzzle {
         _board = new Board(_boardPane);
         _gameCircleArray = _board.getCircles();
         _board.cordonOffRightTriangle(0, 10,11,0);
-        _board.hardCodedPuzzleInitial();
+//        _piece = new Piece(_boardPane, _gameCircleArray, 2, 0);
+//        _piece.getUniqueVariations();
+//        _board.hardCodedPuzzleInitial();
 //        _board.level3_1();
-//
+//        _board.level6_06();
+//        _board.level7_14();
         this.generateAllPieces2();
-        this.search();
+//        this.search();
     }
 
 
     public void generateAllPieces2() {
-        for(int i = 0; i < 8; i++) {
+        for(int i = 0; i < 12; i++) {
             Piece piece = new Piece(_boardPane, _gameCircleArray, i, 0);
+            piece.getUniqueVariations();
             _allPieces2.add(piece);
         }
     }

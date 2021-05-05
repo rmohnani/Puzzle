@@ -1,5 +1,7 @@
 package Puzzle;
 
+import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
@@ -76,6 +78,14 @@ public class GameCircle {
 
     public Circle getCirc() {
         return _circ;
+    }
+
+    public boolean contains(GameCircle other) {
+        if(_circ.contains((other.getCol() * 2 * Constants.CIRCLE_WIDTH) + Constants.CIRCLE_WIDTH,
+                (other.getRow() * 2 * Constants.CIRCLE_WIDTH) + Constants.CIRCLE_WIDTH)) {
+            return true;
+        }
+        return false;
     }
 
     public void setColour(Color color) {
