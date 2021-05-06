@@ -3,8 +3,9 @@ package Puzzle;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This is the Piece Class. It is used to setup the
@@ -13,7 +14,7 @@ import java.util.Arrays;
  * translate the piece, rotate, and check if valid move.
  */
 
-public class Piece {
+public class Piece{
     // declares instance variables.
     private GameCircle[] _piece;
     private Color _colour;
@@ -30,6 +31,7 @@ public class Piece {
     public int _currentVariation;
     private int _pieceCol;
     private int _pieceRow;
+    private ArrayList<HashSet<int[]>> _listOfSets;
 
     /**
      * This is the Piece constructor class. It takes in a pane
@@ -54,7 +56,7 @@ public class Piece {
         _variations = this.generateVariations();
 //        this.getUniqueVariations();
         _type = _variations.get(_currentVariation);
-
+        _listOfSets = new ArrayList<HashSet<int[]>>();
 
 
         this.generatePiece(_boardPane);
@@ -386,6 +388,14 @@ public class Piece {
         return _type;
     }
 
+    public int getVariationsLength() {
+        return _variations.size();
+    }
+
+    public ArrayList<int[][]> getVariation() {
+        return _variations;
+    }
+
     /**
      * This for the current piece returns an Arraylist of 1D matrices of
      * length 2 containing the col, row change for the piece from its
@@ -452,54 +462,169 @@ public class Piece {
         return _piece;
     }
 
-    public boolean completelyContains(Piece otherPiece) {
-        boolean doesContain = true;
-        if (this.getType().length != otherPiece.getType().length) {
-            return false;
+    public ArrayList<int[]> to1DList(int[][] coordinate) {
+        ArrayList<int[]> coordinateList = new ArrayList<int[]>();
+        for (int j = 0; j < coordinate.length; j++) {
+            coordinateList.add(coordinate[j]);
         }
-        else {
-            GameCircle[] other = otherPiece.getPiece();
-            for (int i = 0; i < this.getType().length; i++) {
-                boolean isCircleInside = false;
-                for (int j = 0; j < this.getType().length; j++) {
-                    if (_piece[i].contains(other[j])) {
-                        isCircleInside = true;
-                        break;
-                    }
-                }
-                doesContain = doesContain && isCircleInside;
-                if (!(doesContain)) {
-                    return false;
-                }
-
-            }
-        }
-        return doesContain;
+//        for (int[] row: coordinateSet) {
+//            this.printMatrix1D(row);
+//        }
+        return coordinateList;
     }
 
-    public void getUniqueVariations() {
-        ArrayList<Piece> allPieces = new ArrayList<Piece>();
-        for (int i = 0; i < _variations.size(); i++) {
-//            System.out.println("I: " + i);
-            allPieces.add(new Piece (_boardPane, _gameCircleArray,_num, i));
-//            this.printMatrix2D(_variations.get(i));
+//    @Override
+//    public int hashCode() {
+//        return id.hashCode();
+//    }
+//
+//    @Override
+//    public boolean equals(Object obj) {
+//        return id.equals(((Item)obj).id);
+//    }
+//
+//    public static boolean equals(HashSet<int[]> set1, HashSet<int[]> set2) {
+//        for (int i = 0; i < set1.size(); i++) {
+//            if (!set2.contains(set1.get(i))) {
+//            }
+//        }
+//    }
+//    public boolean isEqual(ArrayList<int[]> coordinate1,ArrayList<int[]> coordinate2) {
+////        system.out.Println("array 1:");
+////        for (int i = 0; i < coordinate1.length)
+//        HashMap coordinates = new HashMap();
+////        Map <int[], String> coordinates = new HashMap<int[], String>();
+//        System.out.println("Coordinate1: ");
+//        for (int l = 0; l < coordinate1.size(); l++) {
+//            this.printMatrix1D(coordinate1.get(l));
+//        }
+//        System.out.println("Coordinat2: ");
+//        for (int a = 0; a < coordinate1.size(); a++) {
+//            this.printMatrix1D(coordinate2.get(a));
+//        }
+//        System.out.println("___________");
+//        for (int i = 0; i < coordinate1.size(); i++) {
+//            ArrayList<int[]> myList = new ArrayList<int[]>(Arrays.asList(coordinate1.get(i)));
+//            coordinates.put(myList, i);
+//        }
+//
+//        for (int j = 0; j < coordinate2.size(); j++) {
+//            this.printMatrix1D(coordinate2.get(j));
+//            ArrayList<int[]> myList = new ArrayList<int[]>(Arrays.asList(coordinate1.get(j)));
+////            System.out.println(myList);
+//            System.out.println("Boolean");
+//            System.out.println((coordinates.containsKey(myList)));
+//            if (!(coordinates.containsKey(myList))) {
+//                System.out.println("its false!!!!!!!!!!!");
+//                return false;
+//            }
+//        }
+//        System.out.println("it's true!!!!!!!");
+//        return true;
+//    }
+
+    public boolean compareCoordinates(ArrayList<int[]> coordinate1,ArrayList<int[]> coordinate2) {
+        boolean areEquivalent = true;
+        for (int i = 0; i < coordinate1.size(); i++) {
+            boolean isSame = false;
+            for (int j = 0; j < coordinate2.size(); j++) {
+                if (Arrays.equals(coordinate1.get(i),coordinate2.get(j))) {
+                    isSame = true;
+                    break;
+                }
+            }
+            areEquivalent = areEquivalent && isSame;
+            if (!(areEquivalent)) {
+                return false;
+            }
         }
-        for (int j = 0; j < allPieces.size(); j++) {
-            for (int k = 0; k < allPieces.size(); k++) {
-                if (j != k) {
-                    if ((allPieces.get(j)).completelyContains((allPieces.get(k)))) {
-                        allPieces.remove(k);
-                        _variations.remove(k);
-                        k-= 1;
+        return areEquivalent;
+    }
+
+    public void getUniqueVariations3() {
+        for (int i = 0; i < _variations.size(); i++) {
+            for (int j = 0; j < _variations.size(); j++) {
+                if (i != j) {
+                    ArrayList<int[]> listI = this.to1DList(_variations.get(i));
+                    ArrayList<int[]> listJ = this.to1DList(_variations.get(j));
+                    if (this.compareCoordinates(listI, listJ)) {
+                        _variations.remove(j);
+                        j -= 1;
                     }
+
                 }
             }
         }
+//        System.out.println(_variations.size());
+    }
+
+
+//    public void getUniqueVariations2() {
+//        for (int i = 0; i < _variations.size(); i++) {
+//            for (int j = 0; j < _variations.size(); j++) {
+//                if (i != j) {
+//                    ArrayList<int[]> listI = this.to1DList(_variations.get(i));
+//                    ArrayList<int[]> listJ = this.to1DList(_variations.get(j));
+//                    if (this.isEqual(listI, listJ)) {
+//                        _variations.remove(j);
+//                        j -= 1;
+//                    }
+//
+//                }
+//            }
+//        }
+//        System.out.println(_variations.size());
+//    }
+
+//    public boolean completelyContains(Piece otherPiece) {
+//        boolean doesContain = true;
+//        if (this.getType().length != otherPiece.getType().length) {
+//            return false;
+//        }
+//        else {
+//            GameCircle[] other = otherPiece.getPiece();
+//            for (int i = 0; i < this.getType().length; i++) {
+//                boolean isCircleInside = false;
+//                for (int j = 0; j < this.getType().length; j++) {
+//                    if (_piece[i].contains(other[j])) {
+//                        isCircleInside = true;
+//                        break;
+//                    }
+//                }
+//                doesContain = doesContain && isCircleInside;
+//                if (!(doesContain)) {
+//                    return false;
+//                }
+//
+//            }
+//        }
+//        return doesContain;
+//    }
+
+//    public void getUniqueVariations() {
+//        ArrayList<Piece> allPieces = new ArrayList<Piece>();
+//        for (int i = 0; i < _variations.size(); i++) {
+////            System.out.println("I: " + i);
+//            allPieces.add(new Piece (_boardPane, _gameCircleArray,_num, i));
+////            this.printMatrix2D(_variations.get(i));
+//        }
+//        for (int j = 0; j < allPieces.size(); j++) {
+//            for (int k = 0; k < allPieces.size(); k++) {
+//                if (j != k) {
+//                    if ((allPieces.get(j)).completelyContains((allPieces.get(k)))) {
+//                        allPieces.remove(k);
+//                        _variations.remove(k);
+//                        k-= 1;
+//                    }
+//                }
+//            }
+//        }
 //        System.out.println(allPieces.size());
 //        System.out.println(_variations.size());
 //        for (int l = 0; l < _variations.size(); l++) {
 //            this.printMatrix2D(_variations.get(l));
 //
 //        }
-    }
+//    }
+
 }

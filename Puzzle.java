@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Puzzle {
 
@@ -30,7 +31,17 @@ public class Puzzle {
         _board = new Board(_boardPane);
         _gameCircleArray = _board.getCircles();
         _board.cordonOffRightTriangle(0, 10,11,0);
-//        _piece = new Piece(_boardPane, _gameCircleArray, 2, 0);
+//        _piece = new Piece(_boardPane, _gameCircleArray, 1, 0);
+//        ArrayList<int[]> coordinate1 = _piece.to1DList((_piece.getVariation()).get(0));
+//        ArrayList<int[]> coordinate2 = _piece.to1DList((_piece.getVariation()).get(1));
+//        Boolean val = _piece.compareCoordinates(coordinate1, coordinate2);
+//        if(val) {
+//            System.out.println("true");
+//        }
+//        else {
+//            System.out.println("false");
+//        }
+//        _piece.getUniqueVariations2();
 //        _piece.getUniqueVariations();
 //        _board.hardCodedPuzzleInitial();
 //        _board.level3_1();
@@ -40,11 +51,23 @@ public class Puzzle {
 //        this.search();
     }
 
+//    public void sort(ArrayList<Piece> allPieces) {
+//        Comparator<Piece> compareByVariationsSize = new Comparator<Piece>() {
+//
+//            @Override
+//            public int compare(Piece o1, Piece o2) {
+//                return o1.getVariations().g;
+//            }
+//        }
+//    }
+
 
     public void generateAllPieces2() {
         for(int i = 0; i < 12; i++) {
             Piece piece = new Piece(_boardPane, _gameCircleArray, i, 0);
-            piece.getUniqueVariations();
+//            piece.getUniqueVariations();
+//            piece.getUniqueVariations2();
+            piece.getUniqueVariations3();
             _allPieces2.add(piece);
         }
     }
@@ -58,7 +81,7 @@ public class Puzzle {
 
             if (currPiece.getChangeVariationBool()) {
                 int curVar = currPiece.getCurrentVariation();
-                int varLength = currPiece.getVariations().size();
+                int varLength = currPiece.getVariationsLength();
 
                 if (curVar < varLength - 1) {
                     curVar += 1;
