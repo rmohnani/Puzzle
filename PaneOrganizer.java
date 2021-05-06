@@ -6,9 +6,9 @@ import javafx.scene.paint.Color;
 
 /**
  * This is the top-level PaneOrganizer Class, which sets up
- * the necessary panes for the Tetris game, and is responsible
- * for graphical aspects of game. It delegates the game logic to
- * the Tetris class which the PaneOrganizer calls.
+ * the necessary panes for the LEU Puzzle, and is responsible
+ * for graphical aspects of Puzzle. It delegates the Solving logic to
+ * the Puzzle class which the PaneOrganizer calls.
  */
 
 public class PaneOrganizer {
@@ -30,13 +30,12 @@ public class PaneOrganizer {
 
     /**
      * This is the createPanes helper method. It creates a pane
-     * for the Board, another to display the next tetromino piece,
-     * another for the buttons, and a final pane for the labels.
-     * It instantiates the top-level Tetris Object.
+     * for the Board, and a pane for the labels.
+     * It instantiates the top-level Puzzle Object.
      */
 
     public void createPanes() {
-        // Sets up pane for Tetris Board, places it in center
+        // Sets up pane for LEU Board, places it in center
         // of root, and sets focus on it for KeyEvents.
         Pane boardPane = new Pane();
         boardPane.setFocusTraversable(true);
@@ -53,23 +52,8 @@ public class PaneOrganizer {
         labelPane.setSpacing(Constants.LABEL_SPACING);
         _root.setTop(labelPane);
 
-        // Sets up Pane for next piece, places it right of root.
-//        BorderPane nextPiecePane = new BorderPane();
-//        nextPiecePane.setFocusTraversable(false);
-//        nextPiecePane.setStyle("-fx-background-color: LIGHTSTEELBLUE");
-//        nextPiecePane.setPrefWidth(Constants.PIECE_PANE_WIDTH);
-//        nextPiecePane.setPrefHeight(Constants.BOARD_HEIGHT);
-//        _root.setRight(nextPiecePane);
 
-        // Sets up Pane for buttons, places it in bottom right
-        // of nextPiece Pane.
-//        HBox buttonPane = new HBox();
-//        buttonPane.setFocusTraversable(false);
-//        buttonPane.setAlignment(Pos.BOTTOM_RIGHT);
-//        nextPiecePane.setBottom(buttonPane);
-
-        // Instantiates top-level Tetris Object
-//        new Tetris(boardPane, labelPane, nextPiecePane, buttonPane);
+        // Instantiates top-level Puzzle Object
         new Puzzle(boardPane);
     }
 

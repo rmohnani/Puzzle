@@ -9,9 +9,10 @@ import java.util.Set;
 
 /**
  * This is the Piece Class. It is used to setup the
- * Different Tetromino pieces, and contains all necessary
- * accessor and mutator methods, as well as methods to
- * translate the piece, rotate, and check if valid move.
+ * Different tromino, tetromino, and pentomino pieces,
+ * and contains all necessary accessor and mutator methods,
+ * as well as methods to change piece translation, variation,
+ * add it to board, remove from board, translate locaiton, etc.
  */
 
 public class Piece{
@@ -55,7 +56,6 @@ public class Piece{
         _pieceCol = 0;
         this.determinePiece();
         _variations = this.generateVariations();
-//        this.getUniqueVariations();
         _type = _variations.get(_currentVariation);
         _listOfSets = new ArrayList<HashSet<int[]>>();
         _fixed = false;
@@ -63,10 +63,6 @@ public class Piece{
 
         this.generatePiece(_boardPane);
         _possTranslations = this.getAllPossibleTranslations();
-
-        // helper methods.
-//        this.addToBoard();
-
     }
 
     public void setPieceCol(int col) {
@@ -141,8 +137,10 @@ public class Piece{
 
     /**
      * This is the determinePiece helper method. it determines
-     * randomly which of the 7 pieces it'll be and its colour.
+     * based on argument to constructor which of the 12 pieces
+     * it'll be and its colour.
      */
+
     public void determinePiece() {
         switch (_num) {
 
@@ -205,8 +203,7 @@ public class Piece{
     }
 
     /**
-     * This is the generatePiece method. It adds the piece
-     * graphically to the pane.
+     * This is the generatePiece method. It logically creates the piece.
      */
 
     public void generatePiece(Pane boardPane) {
@@ -215,26 +212,16 @@ public class Piece{
             int col = (_type[i][0] + Constants.BOARD_X_OFFSET) / (2 * Constants.CIRCLE_WIDTH);
             int row = (_type[i][1] + Constants.BOARD_Y_OFFSET) / (2 * Constants.CIRCLE_WIDTH);
             _piece[i] = new GameCircle(row, col, _colour, _gameCircleArray);
-//            System.out.println("i: " + i + " col: " + col + " row: " + row);
-//            boardPane.getChildren().addAll(_piece[i].getCirc());
         }
     }
 
-    /**
-     * This is the getSquare accessor method, it returns
-     * the ith square of the piece.
-     */
-
-//    public GameCircle getGameCircle(int i) {
-//        return _piece[i];
-//    }
 
     /**
      * This is the translatePieceLocation method, it moves
      * the piece by the colChange and rowChange passed in as
      * arguments.
      */
-//
+
     public void translatePieceLocation(int colChange, int rowChange) {
         for (int i = 0; i < _piece.length; i++) {
             _piece[i].translateCircleLocation(colChange, rowChange);
@@ -244,8 +231,8 @@ public class Piece{
     /**
      * This is the isValidMove helper method. It checks if a colChange
      * and rowChange passed in, is a valid move for the piece and returns
-     * a boolean depending. For each square in the piece, it checks if the
-     * square can move there to determine if the piece overall can move.
+     * a boolean depending. For each circle in the piece, it checks if the
+     * circle can move there to determine if the piece overall can move.
      */
 
     public boolean isValidMove(int colChange, int rowChange) {
@@ -260,9 +247,9 @@ public class Piece{
     }
 
     /**
-     * This is the addToBoard helper method. It simply
+     * This is the addToBoard helper method. It
      * adds the piece logically to the 2d array (board
-     * data structure).
+     * data structure) and graphically to the pane.
      */
 
     public void addToBoard() {
@@ -275,6 +262,11 @@ public class Piece{
             }
         }
     }
+
+    /**
+     * This is the removeFromBoard helper method. It
+     * removes the piece logically and graphically.
+     */
 
     public void removeFromBoard() {
         for (int i = 0; i < _piece.length; i++) {
@@ -333,15 +325,13 @@ public class Piece{
     }
 
     /**
-     * Currently used implementations of rotation and flipping of pieces.
+     * Currently used implementations of rotation and flipping of piece coordinates.
      */
 
     public int[][] rotateCoordinates(int[][] coordinates, double theta) {
         int[][] rotationMatrix = {{(int) Math.cos(theta), (int) -Math.sin(theta)},
                 {(int) Math.sin(theta), (int) Math.cos(theta)}};
-//        this.printMatrix2D(rotationMatrix);
         int[][] ans = this.dotProduct(coordinates, rotationMatrix);
-//        this.printMatrix2D(ans);
         return ans;
     }
 
@@ -362,24 +352,10 @@ public class Piece{
                 flipCoords[i][0] = -diff;
                 flipCoords[i][1] = coordinates[i][1];
             }
-//            this.setColour(Color.RED);
         }
-//        this.printMatrix2D(flipCoords);
         return flipCoords;
     }
 
-    /**
-     * Other debugging code to change piece colour to visually show something has worked
-     * or hasnt worked.
-     *
-     * @param colour
-     */
-
-    public void setColour(Color colour) {
-        for (int i = 0; i < _piece.length; i++) {
-            _piece[i].setColour(colour);
-        }
-    }
 
     /**
      * This is the getType accessor method. it returns a 2d int array of
@@ -469,61 +445,9 @@ public class Piece{
         for (int j = 0; j < coordinate.length; j++) {
             coordinateList.add(coordinate[j]);
         }
-//        for (int[] row: coordinateSet) {
-//            this.printMatrix1D(row);
-//        }
         return coordinateList;
     }
 
-//    @Override
-//    public int hashCode() {
-//        return id.hashCode();
-//    }
-//
-//    @Override
-//    public boolean equals(Object obj) {
-//        return id.equals(((Item)obj).id);
-//    }
-//
-//    public static boolean equals(HashSet<int[]> set1, HashSet<int[]> set2) {
-//        for (int i = 0; i < set1.size(); i++) {
-//            if (!set2.contains(set1.get(i))) {
-//            }
-//        }
-//    }
-//    public boolean isEqual(ArrayList<int[]> coordinate1,ArrayList<int[]> coordinate2) {
-////        system.out.Println("array 1:");
-////        for (int i = 0; i < coordinate1.length)
-//        HashMap coordinates = new HashMap();
-////        Map <int[], String> coordinates = new HashMap<int[], String>();
-//        System.out.println("Coordinate1: ");
-//        for (int l = 0; l < coordinate1.size(); l++) {
-//            this.printMatrix1D(coordinate1.get(l));
-//        }
-//        System.out.println("Coordinat2: ");
-//        for (int a = 0; a < coordinate1.size(); a++) {
-//            this.printMatrix1D(coordinate2.get(a));
-//        }
-//        System.out.println("___________");
-//        for (int i = 0; i < coordinate1.size(); i++) {
-//            ArrayList<int[]> myList = new ArrayList<int[]>(Arrays.asList(coordinate1.get(i)));
-//            coordinates.put(myList, i);
-//        }
-//
-//        for (int j = 0; j < coordinate2.size(); j++) {
-//            this.printMatrix1D(coordinate2.get(j));
-//            ArrayList<int[]> myList = new ArrayList<int[]>(Arrays.asList(coordinate1.get(j)));
-////            System.out.println(myList);
-//            System.out.println("Boolean");
-//            System.out.println((coordinates.containsKey(myList)));
-//            if (!(coordinates.containsKey(myList))) {
-//                System.out.println("its false!!!!!!!!!!!");
-//                return false;
-//            }
-//        }
-//        System.out.println("it's true!!!!!!!");
-//        return true;
-//    }
 
     public boolean compareCoordinates(ArrayList<int[]> coordinate1,ArrayList<int[]> coordinate2) {
         boolean areEquivalent = true;
@@ -557,7 +481,6 @@ public class Piece{
                 }
             }
         }
-//        System.out.println(_variations.size());
     }
 
     public boolean getFixed() {
@@ -567,82 +490,5 @@ public class Piece{
     public void setFixed(boolean fixed) {
         _fixed = fixed;
     }
-
-    public Piece hardPlacePiece(int col, int row, int variation) {
-        this.setCurrentVariation(variation);
-        Piece piece = this.changeVariation(this.getCurrentVariation());
-        piece.translatePieceLocation(col, row);
-        piece.setFixed(true);
-        return piece;
-    }
-
-
-//    public void getUniqueVariations2() {
-//        for (int i = 0; i < _variations.size(); i++) {
-//            for (int j = 0; j < _variations.size(); j++) {
-//                if (i != j) {
-//                    ArrayList<int[]> listI = this.to1DList(_variations.get(i));
-//                    ArrayList<int[]> listJ = this.to1DList(_variations.get(j));
-//                    if (this.isEqual(listI, listJ)) {
-//                        _variations.remove(j);
-//                        j -= 1;
-//                    }
-//
-//                }
-//            }
-//        }
-//        System.out.println(_variations.size());
-//    }
-
-//    public boolean completelyContains(Piece otherPiece) {
-//        boolean doesContain = true;
-//        if (this.getType().length != otherPiece.getType().length) {
-//            return false;
-//        }
-//        else {
-//            GameCircle[] other = otherPiece.getPiece();
-//            for (int i = 0; i < this.getType().length; i++) {
-//                boolean isCircleInside = false;
-//                for (int j = 0; j < this.getType().length; j++) {
-//                    if (_piece[i].contains(other[j])) {
-//                        isCircleInside = true;
-//                        break;
-//                    }
-//                }
-//                doesContain = doesContain && isCircleInside;
-//                if (!(doesContain)) {
-//                    return false;
-//                }
-//
-//            }
-//        }
-//        return doesContain;
-//    }
-
-//    public void getUniqueVariations() {
-//        ArrayList<Piece> allPieces = new ArrayList<Piece>();
-//        for (int i = 0; i < _variations.size(); i++) {
-////            System.out.println("I: " + i);
-//            allPieces.add(new Piece (_boardPane, _gameCircleArray,_num, i));
-////            this.printMatrix2D(_variations.get(i));
-//        }
-//        for (int j = 0; j < allPieces.size(); j++) {
-//            for (int k = 0; k < allPieces.size(); k++) {
-//                if (j != k) {
-//                    if ((allPieces.get(j)).completelyContains((allPieces.get(k)))) {
-//                        allPieces.remove(k);
-//                        _variations.remove(k);
-//                        k-= 1;
-//                    }
-//                }
-//            }
-//        }
-//        System.out.println(allPieces.size());
-//        System.out.println(_variations.size());
-//        for (int l = 0; l < _variations.size(); l++) {
-//            this.printMatrix2D(_variations.get(l));
-//
-//        }
-//    }
 
 }

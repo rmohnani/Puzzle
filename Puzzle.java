@@ -18,52 +18,25 @@ public class Puzzle {
     private Pane _boardPane;
     private Board _board;
     private GameCircle[][] _gameCircleArray;
-    private ArrayList<ArrayList<Piece>> _allPieces;
-    private ArrayList<Piece> _allPieces2;
+    private ArrayList<Piece> _allPieces;
     private Timeline _timeline;
     private Piece _piece;
     private Piece _piece2;
     private ArrayList<int[]> _possTranslations;
 
     public Puzzle(Pane boardPane) {
-//        _allPieces = new ArrayList<ArrayList<Piece>>();
-        _allPieces2 = new ArrayList<Piece>();
+        _allPieces = new ArrayList<Piece>();
         _boardPane = boardPane;
         _board = new Board(_boardPane);
         _gameCircleArray = _board.getCircles();
         _board.cordonOffRightTriangle(0, 10,11,0);
-//        _piece = new Piece(_boardPane, _gameCircleArray, 1, 0);
-//        ArrayList<int[]> coordinate1 = _piece.to1DList((_piece.getVariation()).get(0));
-//        ArrayList<int[]> coordinate2 = _piece.to1DList((_piece.getVariation()).get(1));
-//        Boolean val = _piece.compareCoordinates(coordinate1, coordinate2);
-//        if(val) {
-//            System.out.println("true");
-//        }
-//        else {
-//            System.out.println("false");
-//        }
-//        _piece.getUniqueVariations2();
-//        _piece.getUniqueVariations();
-//        _board.hardCodedPuzzleInitial();
-//        _board.level3_1();
-//        _board.level6_06();
-//        _board.level7_14();
-        this.generateAllPieces2();
-//        _board.level7_14_v2(_allPieces2);
-        _board.level8_11_v2(_allPieces2);
-        this.reduceAndSortAllPieces();
-//        this.search();
-    }
 
-//    public void sort(ArrayList<Piece> allPieces) {
-//        Comparator<Piece> compareByVariationsSize = new Comparator<Piece>() {
-//
-//            @Override
-//            public int compare(Piece o1, Piece o2) {
-//                return o1.getVariations().g;
-//            }
-//        }
-//    }
+        this.generateAllPieces2();
+        _board.level7_14(_allPieces);
+//        _board.level8_11(_allPieces);
+        this.reduceAndSortAllPieces();
+        this.search();
+    }
 
     public class VariationComparator implements Comparator<Piece> {
         @Override
@@ -75,32 +48,29 @@ public class Puzzle {
     public void generateAllPieces2() {
         for(int i = 0; i < 12; i++) {
             Piece piece = new Piece(_boardPane, _gameCircleArray, i, 0);
-//            piece.getUniqueVariations();
-//            piece.getUniqueVariations2();
             piece.getUniqueVariations3();
-            _allPieces2.add(piece);
+            _allPieces.add(piece);
         }
-//        Collections.sort(_allPieces2, new VariationComparator());
     }
 
     public void reduceAndSortAllPieces() {
-        for(int i = 0; i < _allPieces2.size(); i++) {
-            Piece piece = _allPieces2.get(i);
+        for(int i = 0; i < _allPieces.size(); i++) {
+            Piece piece = _allPieces.get(i);
             if (piece.getFixed()) {
                 piece.addToBoard();
-                _allPieces2.remove(i);
+                _allPieces.remove(i);
                 i -= 1;
             }
         }
-        Collections.sort(_allPieces2, new VariationComparator());
+        Collections.sort(_allPieces, new VariationComparator());
     }
 
     public void search() {
 
         int i = 0;
-        while (i < _allPieces2.size()) {
+        while (i < _allPieces.size()) {
             System.out.println("Current i: " + i);
-            Piece currPiece = _allPieces2.get(i);
+            Piece currPiece = _allPieces.get(i);
 
             if (currPiece.getChangeVariationBool()) {
                 int curVar = currPiece.getCurrentVariation();
@@ -116,7 +86,7 @@ public class Puzzle {
                         currPiece.setCurrentVariation(curVar);
                         currPiece = currPiece.changeVariation(currPiece.getCurrentVariation());
                     }
-                    _allPieces2.set(i, currPiece);
+                    _allPieces.set(i, currPiece);
                     if (currPiece.getAllPossibleTranslations().size() > 0) {
                         currPiece.setPossTranslations(currPiece.getAllPossibleTranslations());
                         currPiece.setChangeVariationBool(false);
@@ -135,7 +105,7 @@ public class Puzzle {
 
 
                         i -= 1;
-                        currPiece = _allPieces2.get(i);
+                        currPiece = _allPieces.get(i);
                         if (currPiece.getCurrentTranslation() < currPiece.getPossTranslations().size() - 1) {
                             currPiece.setChangeTranslationBool(true);
                         } else {
@@ -150,11 +120,11 @@ public class Puzzle {
                     currPiece.setCurrentVariation(0);
                     currPiece = currPiece.changeVariation(currPiece.getCurrentVariation());
                     currPiece.setChangeVariationBool(false);
-                    _allPieces2.set(i,currPiece);
+                    _allPieces.set(i,currPiece);
 
 
                     i -= 1;
-                    currPiece = _allPieces2.get(i);
+                    currPiece = _allPieces.get(i);
                     if (currPiece.getCurrentTranslation() < currPiece.getPossTranslations().size() - 1) {
                         currPiece.setChangeTranslationBool(true);
                     } else {

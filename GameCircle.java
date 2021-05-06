@@ -7,9 +7,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 
     /**
-     * This is the Square Class. It is a wrapper class
-     * for the squares that make up the tetris board and
-     * the tetromino pieces.
+     * This is the GameCircle Class. It is a wrapper class
+     * for the Circles that make up the LEU board and
+     * the tromino, tetromino, and pentomino pieces.
      */
 
 public class GameCircle {
@@ -19,10 +19,10 @@ public class GameCircle {
     private GameCircle[][] _gameCircleArray;
 
     /**
-     * This is the square's constructor. Takes in 4 parameters.
-     * row, col specify position in the board. Square[][] board
+     * This is the GameCircle's constructor. Takes in 4 parameters.
+     * row, col specify position in the board. GameCircle[][] board
      * so it knows of the board and can access it. colour for its
-     * colour. Sets up a rectangle with desired properties and graphically
+     * colour. Sets up a circle with desired properties and graphically
      * adds itself.
      */
 
@@ -37,8 +37,8 @@ public class GameCircle {
     }
 
     /**
-     * This is the setLocation mutator method. It moves the square
-     * (rect) to the row and col specified in the arguments.
+     * This is the setLocation mutator method. It moves the GameCircle
+     * (circ) to the row and col specified in the arguments.
      */
 
     public void setLocation(int row, int col) {
@@ -47,8 +47,8 @@ public class GameCircle {
     }
 
     /**
-     * This is the translateSquareLocation which takes in colChange
-     * and rowChange as arguments. It then moves the square by this amount.
+     * This is the translateCircleLocation which takes in colChange
+     * and rowChange as arguments. It then moves the GameCircle by this amount.
      */
 
     public void translateCircleLocation(int colChange, int rowChange) {
@@ -56,7 +56,7 @@ public class GameCircle {
     }
 
     /**
-     * This is the getCol accessor method, which returns the column of the square.
+     * This is the getCol accessor method, which returns the column of the GameCircle.
      */
 
     public int getCol() {
@@ -64,7 +64,7 @@ public class GameCircle {
     }
 
     /**
-     * This is the getRow accessor method, which returns the row of the square.
+     * This is the getRow accessor method, which returns the row of the GameCircle.
      */
 
     public int getRow() {
@@ -72,20 +72,12 @@ public class GameCircle {
     }
 
     /**
-     * This is the getRect accessor method, which returns the rectangle the square
+     * This is the getCirc accessor method, which returns the Circle the GameCircle
      * is made of.
      */
 
     public Circle getCirc() {
         return _circ;
-    }
-
-    public boolean contains(GameCircle other) {
-        if(_circ.contains((other.getCol() * 2 * Constants.CIRCLE_WIDTH) + Constants.CIRCLE_WIDTH,
-                (other.getRow() * 2 * Constants.CIRCLE_WIDTH) + Constants.CIRCLE_WIDTH)) {
-            return true;
-        }
-        return false;
     }
 
     public void setColour(Color color) {
@@ -106,12 +98,10 @@ public class GameCircle {
 
         if ((col > Constants.COLS - 1) ||
                 (col < 0)) {
-//            return false;
             canMove = false;
         }
         if ((row > Constants.ROWS - 1)) {
             canMove = false;
-//            return false;
         }
         if ( (row + rowChange > Constants.ROWS - 1) || (col + colChange > Constants.COLS - 1)
             || (row + rowChange < 0) || (col + colChange < 0)) {

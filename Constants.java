@@ -4,7 +4,7 @@ import javafx.scene.paint.Color;
 
 /**
  *  This is the Constants Class, it contains all the
- * constants used in the entirety of Tetris.
+ * constants used in the entirety of Puzzle.
  */
 
 public class Constants {
@@ -37,9 +37,6 @@ public class Constants {
             {2 * CIRCLE_WIDTH, 2 * CIRCLE_WIDTH}, {0, 4 * CIRCLE_WIDTH}};
     public static final int[][] PURPLE_LINE_PIECE = {{0, 0}, {0, 2 * CIRCLE_WIDTH}, {0, 4 * CIRCLE_WIDTH}, {0, 6 * CIRCLE_WIDTH}};
 
-
-    public static final int[][] BLOCKED_OFF = {{}};
-
     public static final int BOARD_WIDTH = 440;
     public static final int BOARD_HEIGHT = 400;
     public static final int X_OFFSET = 5 * CIRCLE_WIDTH;
@@ -48,12 +45,8 @@ public class Constants {
     public static final int BOARD_Y_OFFSET = 1 * CIRCLE_WIDTH;
     public static final double DEGREES_90 = Math.PI / 2;
     public static final Color BOARD_COLOUR = Color.CHOCOLATE;
-    public static final double DURATION = 0.3;
-//    public static final int ROWS = 10;
-//    public static final int COLS = 11;
     public static final int ROWS = BOARD_HEIGHT / (2 * CIRCLE_WIDTH);
     public static final int COLS = BOARD_WIDTH / (2 * CIRCLE_WIDTH);
     public static final int LABEL_HEIGHT = 20;
     public static final int LABEL_SPACING = 60;
-    public static final int PIECE_PANE_WIDTH = 300;
 }

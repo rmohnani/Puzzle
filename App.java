@@ -5,10 +5,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * This is the App class. It starts the Tetris game, in which
- * 7 different tetromino pieces are randomly created, falling
- * down, and the player has to carefully place them to survive
- * the longest by clearing lines.
+ * This is the App class. It starts the LEU Puzzle game, in which
+ * some pentomino and tetromino pieces must be used to cover the empty
+ * region exactly. This empty region can be a rectangle, triangle, pentagon
+ * , etc. But main focus is on triangle region as of now.
  *
  * The Start method starts the game by instantiating a top-level
  * PaneOrganizer Object, setting up the scene, and shows the stage.
