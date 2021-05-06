@@ -32,6 +32,7 @@ public class Piece{
     private int _pieceCol;
     private int _pieceRow;
     private ArrayList<HashSet<int[]>> _listOfSets;
+    private boolean _fixed;
 
     /**
      * This is the Piece constructor class. It takes in a pane
@@ -57,6 +58,7 @@ public class Piece{
 //        this.getUniqueVariations();
         _type = _variations.get(_currentVariation);
         _listOfSets = new ArrayList<HashSet<int[]>>();
+        _fixed = false;
 
 
         this.generatePiece(_boardPane);
@@ -192,7 +194,7 @@ public class Piece{
                 break;
             case 10:
                 _type = Constants.RED_SQUAREISH_PIECE;
-                _colour = Color.CYAN;
+                _colour = Color.RED;
                 break;
             case 11:
                 _type = Constants.PURPLE_LINE_PIECE;
@@ -280,7 +282,7 @@ public class Piece{
             int col = _piece[i].getCol();
             _boardPane.getChildren().removeAll(_piece[i].getCirc());
             if (row + col <= 9) {
-                _gameCircleArray[row][col] = new GameCircle(row, col, Color.RED, _gameCircleArray);
+                _gameCircleArray[row][col] = new GameCircle(row, col, Constants.BOARD_COLOUR, _gameCircleArray);
             }
             else {
                 _gameCircleArray[row][col] = null;
@@ -556,6 +558,22 @@ public class Piece{
             }
         }
 //        System.out.println(_variations.size());
+    }
+
+    public boolean getFixed() {
+        return _fixed;
+    }
+
+    public void setFixed(boolean fixed) {
+        _fixed = fixed;
+    }
+
+    public Piece hardPlacePiece(int col, int row, int variation) {
+        this.setCurrentVariation(variation);
+        Piece piece = this.changeVariation(this.getCurrentVariation());
+        piece.translatePieceLocation(col, row);
+        piece.setFixed(true);
+        return piece;
     }
 
 

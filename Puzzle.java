@@ -49,6 +49,9 @@ public class Puzzle {
 //        _board.level6_06();
 //        _board.level7_14();
         this.generateAllPieces2();
+//        _board.level7_14_v2(_allPieces2);
+        _board.level8_11_v2(_allPieces2);
+        this.reduceAndSortAllPieces();
 //        this.search();
     }
 
@@ -76,6 +79,18 @@ public class Puzzle {
 //            piece.getUniqueVariations2();
             piece.getUniqueVariations3();
             _allPieces2.add(piece);
+        }
+//        Collections.sort(_allPieces2, new VariationComparator());
+    }
+
+    public void reduceAndSortAllPieces() {
+        for(int i = 0; i < _allPieces2.size(); i++) {
+            Piece piece = _allPieces2.get(i);
+            if (piece.getFixed()) {
+                piece.addToBoard();
+                _allPieces2.remove(i);
+                i -= 1;
+            }
         }
         Collections.sort(_allPieces2, new VariationComparator());
     }
