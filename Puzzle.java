@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 public class Puzzle {
@@ -61,6 +62,12 @@ public class Puzzle {
 //        }
 //    }
 
+    public class VariationComparator implements Comparator<Piece> {
+        @Override
+        public int compare(Piece o1, Piece o2) {
+            return (o1.getVariationsLength() - o2.getVariationsLength());
+        }
+    }
 
     public void generateAllPieces2() {
         for(int i = 0; i < 12; i++) {
@@ -70,6 +77,7 @@ public class Puzzle {
             piece.getUniqueVariations3();
             _allPieces2.add(piece);
         }
+        Collections.sort(_allPieces2, new VariationComparator());
     }
 
     public void search() {
