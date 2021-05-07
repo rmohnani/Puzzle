@@ -30,12 +30,13 @@ public class Puzzle {
         _board = new Board(_boardPane);
         _gameCircleArray = _board.getCircles();
         _board.cordonOffRightTriangle(0, 10,11,0);
-
-        this.generateAllPieces2();
-        _board.level7_14(_allPieces);
+//        _board.cordonOffRectangle(0,0,11,5);
+//        _board.cordonOffPentagon();
+//        this.generateAllPieces2();
+//        _board.level7_14(_allPieces);
 //        _board.level8_11(_allPieces);
-        this.reduceAndSortAllPieces();
-        this.search();
+//        this.reduceAndSortAllPieces();
+//        this.search();
     }
 
     public class VariationComparator implements Comparator<Piece> {

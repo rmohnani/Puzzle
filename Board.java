@@ -42,6 +42,8 @@ public class Board {
      * the board are occupied by borderCircles.
      */
 
+    // values for Puzzle Triangle Cordon off: 0,10,11,0
+
     public void cordonOffRightTriangle(int colBegin, int rowBegin, int colEnd, int rowEnd) {
         int getRidOff = rowBegin - rowEnd;
         for (int col = colBegin; col < colEnd; col++) {
@@ -57,6 +59,71 @@ public class Board {
             getRidOff -= 1;
         }
     }
+
+    // values for Puzzle Rectangle Cordon off: 0,0,11,5
+
+    public void cordonOffRectangle(int colBegin, int rowBegin, int colEnd, int rowEnd) {
+        for (int col = colBegin; col < colEnd; col++) {
+            for (int row = rowBegin; row < rowEnd; row++) {
+                if (_gameCircleArray[row][col] == null) {
+                    _gameCircleArray[row][col] = new GameCircle(row, col,Constants.BOARD_COLOUR, _gameCircleArray);
+                    _gameCircleArray[row][col].setLocation(row, col);
+                    _boardPane.getChildren().add(
+                            _gameCircleArray[row][col].getCirc());
+                }
+            }
+        }
+    }
+
+    public void cordonOffTriangle(int colBegin, int rowBegin, int colEnd, int rowEnd) {
+        int val = rowBegin - colBegin;
+        if (rowBegin - rowEnd <= 0) {
+            for(int col = colBegin; col < colEnd; col++) {
+                for (int row = rowBegin; row < rowEnd; row++) {
+                    if (row - col >= rowBegin - colBegin) {
+                        if (_gameCircleArray[row][col] == null) {
+                            _gameCircleArray[row][col] = new GameCircle(row, col, Constants.BOARD_COLOUR, _gameCircleArray);
+                            _gameCircleArray[row][col].setLocation(row, col);
+                            _boardPane.getChildren().add(
+                                    _gameCircleArray[row][col].getCirc());
+                        }
+                    }
+                }
+            }
+        }
+        if (rowBegin - rowEnd > 0) {
+            for (int col = colBegin; col < colEnd; col++) {
+                for (int row = rowEnd; row < rowBegin; row++) {
+                    if (col - row >= colBegin - rowEnd) {
+                        if (_gameCircleArray[row][col] == null) {
+                            _gameCircleArray[row][col] = new GameCircle(row, col, Constants.BOARD_COLOUR, _gameCircleArray);
+                            _gameCircleArray[row][col].setLocation(row, col);
+                            _boardPane.getChildren().add(
+                                    _gameCircleArray[row][col].getCirc());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void cordonOffPentagon() {
+        this.cordonOffRectangle(0,0,1,10);
+        this.cordonOffTriangle(1,7,4,10);
+        this.cordonOffRectangle(10,0,11,10);
+        this.cordonOffTriangle(6,5,10,0);
+        this.cordonOffRectangle(1,0,2,5);
+        this.cordonOffRectangle(1,1,5,2);
+        this.cordonOffRectangle(2,0,6,1);
+        this.cordonOffRightTriangle(2,5,5,1);
+
+        _gameCircleArray[6][7] = new GameCircle(6, 7, Constants.BOARD_COLOUR, _gameCircleArray);
+        _gameCircleArray[6][7].setLocation(6, 7);
+        _boardPane.getChildren().add(
+                _gameCircleArray[6][7].getCirc());
+    }
+
+
 
     /**
      * This sets up specificially the puzzle board for
